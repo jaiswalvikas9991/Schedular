@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schedular/bloc/PlanListBloc.dart';
 import 'package:schedular/widgets/DayTray.dart';
+import 'package:schedular/widgets/PlanTile.dart';
 
 class Plan extends StatefulWidget {
   Plan({Key key}) : super(key: key);
@@ -57,11 +58,10 @@ class _PlanState extends State<Plan> {
           indent: 20,
           endIndent: 20,
         ),
-        
         Expanded(
           child: ListView(
             children: <Widget>[
-              
+              PlanTile(heading: 'Heading',trailing: Icons.keyboard_arrow_down,trailingExpanded: Icons.keyboard_arrow_up,)
             ],
           ),
         )
@@ -113,7 +113,7 @@ class BackPainter extends CustomPainter {
     path.lineTo(size.width, 0);
     path.close();
 
-    paint.color = Colors.blue;
+    paint.color = Color(0xffffaece);
     canvas.drawPath(path, paint);
 
     path = Path();
@@ -129,7 +129,7 @@ class BackPainter extends CustomPainter {
     path.lineTo(size.width, 0);
     path.close();
 
-    paint.color = Colors.yellow;
+    paint.color = Color(0xffffaece);
     canvas.drawPath(path, paint);
   }
 
