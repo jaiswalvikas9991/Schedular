@@ -12,7 +12,7 @@ class Plan extends StatefulWidget {
 class _PlanState extends State<Plan> {
   PlanListBloc _placListBloc = new PlanListBloc();
 
-  List<Widget> renderPlan() {
+  List<Widget> _renderPlan() {
     return [
       Container(height: 400, child: Text('Hello')),
       Container(height: 400, child: Text('Hello')),
@@ -61,7 +61,9 @@ class _PlanState extends State<Plan> {
         Expanded(
           child: ListView(
             children: <Widget>[
-              PlanTile(heading: 'Heading',trailing: Icons.keyboard_arrow_down,trailingExpanded: Icons.keyboard_arrow_up,)
+              PlanTile(heading: 'Heading',trailing: Icon(Icons.keyboard_arrow_down),trailingExpanded: Icon(Icons.keyboard_arrow_up)),
+              PlanTile(heading: 'Heading',trailing: Icon(Icons.keyboard_arrow_down),trailingExpanded: Icon(Icons.keyboard_arrow_up)),
+              PlanTile(heading: 'Heading',trailing: Icon(Icons.keyboard_arrow_down),trailingExpanded: Icon(Icons.keyboard_arrow_up))
             ],
           ),
         )
@@ -129,7 +131,7 @@ class BackPainter extends CustomPainter {
     path.lineTo(size.width, 0);
     path.close();
 
-    paint.color = Color(0xffffaece);
+    paint.color = Color(0xff89f7fe);
     canvas.drawPath(path, paint);
   }
 

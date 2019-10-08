@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schedular/screens/Home.dart';
 import 'package:schedular/screens/Plan.dart';
+import 'package:schedular/utils/Theme.dart';
 
 void main() => runApp(MyApp());
 
@@ -17,9 +18,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Schedular',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: theme(),
       home: SafeArea(
           child: Scaffold(
             body: _widgetList[this._selectedIndex],

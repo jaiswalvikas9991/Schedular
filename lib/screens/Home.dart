@@ -32,6 +32,7 @@ class _HomeState extends State<Home> {
             ),
             Calendar(
               width: MediaQuery.of(context).size.width * 0.95,
+              color: Theme.of(context).primaryColor,
             ),
             Divider(
               color: Colors.black,

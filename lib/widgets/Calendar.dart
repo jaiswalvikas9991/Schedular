@@ -5,7 +5,8 @@ import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
 
 class Calendar extends StatefulWidget {
   final double width;
-  Calendar({this.width});
+  final Color color;
+  Calendar({this.width,this.color});
   @override
   _CalendarState createState() => _CalendarState();
 }
@@ -38,7 +39,7 @@ class _CalendarState extends State<Calendar> {
     return Container(
       width: widget.width ?? double.infinity,
       decoration: new BoxDecoration(
-        color: const Color(0xff0085FF),
+        color: widget.color ??  Color(0xff0085FF),
         borderRadius: BorderRadius.all(Radius.circular(30.0)),
       ),
       child: Column(

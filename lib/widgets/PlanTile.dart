@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class PlanTile extends StatefulWidget {
-  final IconData leading;
+  final Icon leading;
   final String heading;
-  final IconData trailing;
-  final IconData trailingExpanded;
+  final Icon trailing;
+  final Icon trailingExpanded;
   const PlanTile(
       {Key key,
       this.leading,
@@ -31,15 +32,16 @@ class _PlanTileState extends State<PlanTile> {
           alignment: Alignment.bottomLeft,
           child: Text(
             'Task Description',
-            style: TextStyle(color: Colors.white70,fontWeight: FontWeight.bold, fontSize: 18),
+            style: Theme.of(context).textTheme.title,
             textAlign: TextAlign.start,
           ),
         ),
         SizedBox(
           height: 15,
         ),
-        Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-          style: TextStyle(color: Colors.white),
+        Text(
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+          style: Theme.of(context).textTheme.body1,
         ),
         SizedBox(
           height: 20,
@@ -49,69 +51,88 @@ class _PlanTileState extends State<PlanTile> {
     );
   }
 
-  Widget renderBottom(){
+  Widget renderBottom() {
     return Row(
+      children: <Widget>[
+        Column(
           children: <Widget>[
-            Column(
+            FlatButton(
+                child: Text(
+                  'Priority',
+                  style: TextStyle(color: Colors.white70),
+                ),
+                onPressed: () {}),
+            Row(
               children: <Widget>[
-                FlatButton(child: Text('Priority',style: TextStyle(color: Colors.white70),), onPressed: (){}),
-                Row(
-                  children: <Widget>[
-                     Padding(
-                       padding: const EdgeInsets.all(5.0),
-                       child: CircleAvatar(radius: 10),
-                     ),
-                    Padding(
-                       padding: const EdgeInsets.all(5.0),
-                       child: CircleAvatar(radius: 10),
-                     ),
-                     Padding(
-                       padding: const EdgeInsets.all(5.0),
-                       child: CircleAvatar(radius: 10),
-                     ),
-                  ],
-                )
-              ],
-            ),
-
-            Expanded(child: Container()),
-            Column(
-              children: <Widget>[
-                FlatButton(child: Text('Rating',style: TextStyle(color: Colors.white70),), onPressed: (){}),
-                Row(
-                  children: <Widget>[
-                     Padding(
-                       padding: const EdgeInsets.all(5.0),
-                       child: CircleAvatar(radius: 10),
-                     ),
-                     Padding(
-                       padding: const EdgeInsets.all(5.0),
-                       child: CircleAvatar(radius: 10),
-                     ),
-                     Padding(
-                       padding: const EdgeInsets.all(5.0),
-                       child: CircleAvatar(radius: 10),
-                     ),
-
-                  ],
-                )
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: CircleAvatar(
+                    radius: 10,
+                    backgroundColor: Color(0xff70e698),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: CircleAvatar(
+                    radius: 10,
+                    backgroundColor: Color(0xfff5f887),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: CircleAvatar(
+                    radius: 10,
+                    backgroundColor: Color(0xff8db8f5),
+                  ),
+                ),
               ],
             )
           ],
-        );
+        ),
+        Expanded(child: Container()),
+        Column(
+          children: <Widget>[
+            FlatButton(
+                child: Text(
+                  'Rating',
+                  style: TextStyle(color: Colors.white70),
+                ),
+                onPressed: () {}),
+            Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: CircleAvatar(
+                    radius: 10,
+                    backgroundColor: Color(0xff70e698),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: CircleAvatar(
+                    radius: 10,
+                    backgroundColor: Color(0xfff5f887),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: CircleAvatar(
+                    radius: 10,
+                    backgroundColor: Color(0xff8db8f5),
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        Expanded(child: Container(),),
-
-        Container(
-          color: Colors.black,
-          width: 1,
-          height: 50,
-        ),
         Container(
           width: MediaQuery.of(context).size.width * 0.75,
           child: Card(
@@ -122,7 +143,12 @@ class _PlanTileState extends State<PlanTile> {
             child: Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(30)),
-                  color: Color(0xff8cb8f7)),
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [Color(0xff66a6ff), Color(0xff89f7fe)]
+                      // colors: [Color(0xff1cd8d2),Color(0xff93edc7)]
+                      )),
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
@@ -130,16 +156,22 @@ class _PlanTileState extends State<PlanTile> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        widget.leading != null ? Icon(widget.leading) : Container(),
-                        Text(widget.heading,
-                            style:
-                                TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: 22),),
+                        widget.leading ?? Container(),
+                        Text(
+                          widget.heading,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22),
+                        ),
                         Expanded(child: Container()),
                         widget.trailing != null
                             ? IconButton(
                                 icon: this.isExpanded
-                                    ? Icon(widget.trailingExpanded)
-                                    : Icon(widget.trailing),
+                                    ? widget.trailingExpanded ??
+                                        Icon(Icons.keyboard_arrow_down)
+                                    : widget.trailing ??
+                                        Icon(Icons.keyboard_arrow_up),
                                 onPressed: () {
                                   setState(() {
                                     this.isExpanded = !this.isExpanded;
@@ -156,9 +188,38 @@ class _PlanTileState extends State<PlanTile> {
             ),
           ),
         ),
-
-        SizedBox(
-          width: MediaQuery.of(context).size.width * 0.050,
+        Container(
+          child: Column(
+            children: <Widget>[
+              FlatButton(
+                child: Text("Start", style: TextStyle(color: Colors.red)),
+                onPressed: () {
+                  DatePicker.showTimePicker(context, showTitleActions: true,
+                      onChanged: (date) {
+                    print('change $date');
+                  }, onConfirm: (date) {
+                    print('confirm $date');
+                  }, currentTime: DateTime.now(), locale: LocaleType.en);
+                },
+              ),
+              Container(
+                height: 1,
+                width: 10,
+                color: Colors.black,
+              ),
+              FlatButton(
+                child: Text("End", style: TextStyle(color: Colors.red)),
+                onPressed: () {
+                  DatePicker.showTimePicker(context, showTitleActions: true,
+                      onChanged: (date) {
+                    print('change $date');
+                  }, onConfirm: (date) {
+                    print('confirm $date');
+                  }, currentTime: DateTime.now(), locale: LocaleType.en);
+                },
+              )
+            ],
+          ),
         )
       ],
     );
