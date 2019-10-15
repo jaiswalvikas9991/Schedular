@@ -33,7 +33,7 @@ Widget customDayBuilder(
 
 class _CalendarState extends State<Calendar> {
   DateTime _currentDate;
-  bool isShrinked = true;
+  bool isShrinked = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -54,7 +54,7 @@ class _CalendarState extends State<Calendar> {
                 ? MediaQuery.of(context).size.height * 0.23
                 : MediaQuery.of(context).size.height * 0.50,
             //Selected date styles
-            selectedDayButtonColor: const Color(0xff0085FF),
+            selectedDayButtonColor: const Color(0xffb6bfcf),
             selectedDayTextStyle: TextStyle(color: Colors.white),
             //header text styles
             headerTextStyle: TextStyle(color: Colors.white, fontSize: 20.0),

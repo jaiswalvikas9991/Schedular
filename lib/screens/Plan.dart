@@ -12,20 +12,6 @@ class Plan extends StatefulWidget {
 class _PlanState extends State<Plan> {
   PlanListBloc _placListBloc = new PlanListBloc();
 
-  List<Widget> _renderPlan() {
-    return [
-      Container(height: 400, child: Text('Hello')),
-      Container(height: 400, child: Text('Hello')),
-      Container(height: 400, child: Text('Hello')),
-      Container(height: 400, child: Text('Hello')),
-      Container(height: 400, child: Text('Hello')),
-      Container(height: 400, child: Text('Hello')),
-      Container(height: 400, child: Text('Hello')),
-      Container(height: 400, child: Text('Hello')),
-      Container(height: 400, child: Text('Hello')),
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(

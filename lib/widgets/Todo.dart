@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:schedular/bloc/TodoBloc.dart';
 import 'package:schedular/bloc/TodoListBloc.dart';
+import 'package:schedular/utils/Provider.dart';
 import 'package:schedular/widgets/CCheckBox.dart';
 
 class Todo extends StatefulWidget {
-  final String id;
-  final TodoListBloc todoListBloc;
-  Todo(this.id, this.todoListBloc, {Key key}) : super(key: key);
+  final TodoBloc todoBloc;
+  Todo(this.todoBloc, {Key key}) : super(key: key);
 
   @override
   _TodoState createState() => _TodoState();
@@ -15,9 +15,9 @@ class Todo extends StatefulWidget {
 class _TodoState extends State<Todo> {
   final TextEditingController _textController = new TextEditingController();
   bool _isBeingEdited = false;
-  TodoBloc _todoBloc = new TodoBloc();
 
-  Widget renderButtonBar() {
+  Widget renderButtonBar(BuildContext context) {
+    final TodoListBloc _todoListBloc = Provider.of(context);
     return ButtonTheme.bar(
       // make buttons use the appropriate styles for cards
       child: ButtonBar(
@@ -25,17 +25,19 @@ class _TodoState extends State<Todo> {
           FlatButton(
             child: const Text('DELETE'),
             onPressed: () {
-              widget.todoListBloc.deleteTodo(widget.id);
+              _todoListBloc.deleteTodo(widget.todoBloc.id);
             },
           ),
           FlatButton(
             child: Text(this._isBeingEdited ? 'SAVE' : 'EDIT'),
             onPressed: () {
+              if (this._isBeingEdited == true &&
+                  this._textController.text != '') {
+                widget.todoBloc.updateContent(this._textController.text);
+              }
               setState(() {
                 this._isBeingEdited = !this._isBeingEdited;
               });
-              _todoBloc.updateContent(this._textController.text);
-              widget.todoListBloc.updateTodoContent(this._textController.text, widget.id);
             },
           ),
         ],
@@ -45,43 +47,45 @@ class _TodoState extends State<Todo> {
 
   Widget renderTextField() {
     return Expanded(
-      child: StreamBuilder(
-          stream: _todoBloc.contentObservable,
+      child: StreamBuilder<String>(
+          stream: widget.todoBloc.contentObservable,
+          initialData: "Click on Edit",
           builder: (context, AsyncSnapshot<String> snapshot) {
-            return snapshot.hasData ?  this._isBeingEdited
-                ? TextField(
-                    key: Key(widget.id),
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      labelText: 'Write down a quick todo...',
-                    ),
-                    controller: _textController,
-                  )
-                : Text(
-                    snapshot.data == ''
-                        ? 'Click on Edit to add a Todo...'
-                        : snapshot.data,
-                        key: Key(widget.id),
-                    overflow: TextOverflow.ellipsis,
-                  ) : Container();
+            return snapshot.hasData
+                ? this._isBeingEdited
+                    ? TextField(
+                        key: UniqueKey(),
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          labelText: 'Write down a quick todo...',
+                        ),
+                        controller: _textController,
+                      )
+                    : Text(
+                        snapshot.data,
+                        style: Theme.of(context).textTheme.body2,
+                        key: UniqueKey(),
+                      )
+                : Container();
           }),
     );
   }
 
   Widget renderCheckBox() {
-    return StreamBuilder(
-        stream: _todoBloc.isCheckedObservable,
+    return StreamBuilder<bool>(
+        stream: widget.todoBloc.isCheckedObservable,
+        initialData: false,
         builder: (context, AsyncSnapshot<bool> snapshot) {
-          return snapshot.hasData ? CCheckBox(
-            value: snapshot.data,
-              onTap: () {
-                _todoBloc.updateCheckedState(!snapshot.data);
-                widget.todoListBloc.updateTodoIsChecked(!snapshot.data, widget.id);
-              },
-            ) : Container();
-          
+          return snapshot.hasData
+              ? CCheckBox(
+                  value: snapshot.data,
+                  onTap: () {
+                    widget.todoBloc.updateCheckedState(!snapshot.data);
+                  },
+                )
+              : Container();
         });
   }
 
@@ -97,7 +101,7 @@ class _TodoState extends State<Todo> {
               renderTextField(),
             ],
           ),
-          renderButtonBar(),
+          renderButtonBar(context),
         ],
       ),
     );
@@ -105,9 +109,9 @@ class _TodoState extends State<Todo> {
 
   @override
   void dispose() {
-    super.dispose();
     _textController.clear();
     _textController.dispose();
-    _todoBloc.dispose();
+    widget.todoBloc.dispose();
+    super.dispose();
   }
 }

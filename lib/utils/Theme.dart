@@ -14,6 +14,9 @@ ThemeData theme(){
       ),
       body1: base.body1.copyWith(
         color: Colors.white
+      ),
+      body2: base.body2.copyWith(
+        color: Colors.black
       )
     );
   }

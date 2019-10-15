@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:schedular/screens/Edit.dart';
 
 class PlanTile extends StatefulWidget {
   final Icon leading;
@@ -137,18 +138,13 @@ class _PlanTileState extends State<PlanTile> {
           width: MediaQuery.of(context).size.width * 0.75,
           child: Card(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30.0),
+              borderRadius: BorderRadius.circular(10.0),
             ),
             elevation: 5,
             child: Container(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: [Color(0xff66a6ff), Color(0xff89f7fe)]
-                      // colors: [Color(0xff1cd8d2),Color(0xff93edc7)]
-                      )),
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  color: Color(0xff66a6ff)),
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
@@ -210,12 +206,16 @@ class _PlanTileState extends State<PlanTile> {
               FlatButton(
                 child: Text("End", style: TextStyle(color: Colors.red)),
                 onPressed: () {
-                  DatePicker.showTimePicker(context, showTitleActions: true,
-                      onChanged: (date) {
-                    print('change $date');
-                  }, onConfirm: (date) {
-                    print('confirm $date');
-                  }, currentTime: DateTime.now(), locale: LocaleType.en);
+                  // DatePicker.showTimePicker(context, showTitleActions: true,
+                  //     onChanged: (date) {
+                  //   print('change $date');
+                  // }, onConfirm: (date) {
+                  //   print('confirm $date');
+                  // }, currentTime: DateTime.now(), locale: LocaleType.en);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Edit()),
+                  );
                 },
               )
             ],

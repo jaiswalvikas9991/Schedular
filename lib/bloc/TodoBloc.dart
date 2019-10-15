@@ -1,16 +1,20 @@
 import 'package:rxdart/rxdart.dart';
 
 class TodoBloc {
-  bool _isChecked = false;
-  String _content = "Add some todo...";
+  String id;
+  bool _isChecked;
+  String _content;
 
   // Behaviour Subjects
   BehaviorSubject<bool> _subjectIsChecked;
   BehaviorSubject<String> _subjectContent;
 
-  TodoBloc() {
-    _subjectIsChecked = new BehaviorSubject<bool>.seeded(false);
-    _subjectContent = new BehaviorSubject<String>.seeded("Add some todo...");
+  TodoBloc(id , {isChecked, String content}) {
+    this.id = id;
+    this._content = content ?? "Add some todo..." ;
+    this._isChecked = isChecked ?? false;
+    _subjectIsChecked = new BehaviorSubject<bool>();
+    _subjectContent = new BehaviorSubject<String>();
   }
 
   // Streams

@@ -5,7 +5,7 @@ class CCheckBox extends StatefulWidget {
   final Color activeColor;
   final Color notActiveColor;
   final bool value;
-  CCheckBox({Key key,this.onTap,this.activeColor,this.notActiveColor, this.value}) : super(key: key);
+  CCheckBox({Key key, @required this.onTap,this.activeColor,this.notActiveColor, @required this.value}) : super(key: key);
 
   _CCheckBoxState createState() => _CCheckBoxState();
 }

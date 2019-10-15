@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:schedular/bloc/TodoBloc.dart';
 import 'package:schedular/bloc/TodoListBloc.dart';
+import 'package:schedular/utils/Provider.dart';
 import 'package:schedular/widgets/Calendar.dart';
 import 'package:schedular/widgets/Todo.dart';
 
@@ -13,16 +15,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  TodoListBloc _todoListBloc = new TodoListBloc();
-
-  List<Widget> renderTodos(List<Map<String, dynamic>> todos) {
+  List<Widget> renderTodos(List<TodoBloc> allTodo) {
     List<Widget> todoWidgets = [];
-    for (int i = 0; i < todos.length; i++)
-      todoWidgets.add(Todo(todos[i]['id'], this._todoListBloc));
+    for (int i = 0; i < allTodo.length; i++)
+      todoWidgets.add(Todo(allTodo[i]));
     return todoWidgets;
   }
 
   Widget build(BuildContext context) {
+    final TodoListBloc _todoListBloc = Provider.of<TodoListBloc>(context);
     return SafeArea(
       child: new Scaffold(
         body: Column(
@@ -39,10 +40,10 @@ class _HomeState extends State<Home> {
               indent: 20,
               endIndent: 20,
             ),
-            StreamBuilder(
+            StreamBuilder<List<TodoBloc>>(
                 stream: _todoListBloc.allTodoObservable,
                 builder: (context,
-                    AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+                    AsyncSnapshot<List<TodoBloc>> snapshot) {
                   return snapshot.hasData
                       ? Expanded(
                           child: ListView(
