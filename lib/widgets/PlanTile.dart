@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:schedular/screens/Edit.dart';
+import 'package:schedular/widgets/CCheckBox.dart';
 
 class PlanTile extends StatefulWidget {
   final Icon leading;
@@ -20,7 +20,7 @@ class PlanTile extends StatefulWidget {
 }
 
 class _PlanTileState extends State<PlanTile> {
-  bool isExpanded = false;
+  bool isExpanded = true;
 
   Widget renderExpandedWidgets() {
     return Column(
@@ -187,15 +187,13 @@ class _PlanTileState extends State<PlanTile> {
         Container(
           child: Column(
             children: <Widget>[
-              FlatButton(
-                child: Text("Start", style: TextStyle(color: Colors.red)),
-                onPressed: () {
-                  DatePicker.showTimePicker(context, showTitleActions: true,
-                      onChanged: (date) {
-                    print('change $date');
-                  }, onConfirm: (date) {
-                    print('confirm $date');
-                  }, currentTime: DateTime.now(), locale: LocaleType.en);
+              IconButton(
+                icon: Icon(Icons.edit, color: Colors.blue),
+                onPressed: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Edit()),
+                  );
                 },
               ),
               Container(
@@ -203,21 +201,23 @@ class _PlanTileState extends State<PlanTile> {
                 width: 10,
                 color: Colors.black,
               ),
-              FlatButton(
-                child: Text("End", style: TextStyle(color: Colors.red)),
-                onPressed: () {
-                  // DatePicker.showTimePicker(context, showTitleActions: true,
-                  //     onChanged: (date) {
-                  //   print('change $date');
-                  // }, onConfirm: (date) {
-                  //   print('confirm $date');
-                  // }, currentTime: DateTime.now(), locale: LocaleType.en);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Edit()),
-                  );
-                },
+
+              CCheckBox(
+                value: true,
+                onTap: (){},
+              ),
+
+              Container(
+                height: 1,
+                width: 10,
+                color: Colors.black,
+              ),
+
+              IconButton(
+                icon: Icon(Icons.alarm_off,color: Colors.blue,),
+                onPressed: (){},
               )
+
             ],
           ),
         )

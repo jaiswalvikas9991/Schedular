@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calendar_carousel/classes/event.dart';
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
-    show CalendarCarousel;
+import 'package:table_calendar/table_calendar.dart';
 
 class Calendar extends StatefulWidget {
   final double width;
   final Color color;
-  Calendar({this.width,this.color});
+  final Function onDayPressed;
+  Calendar({this.width, this.color, @required this.onDayPressed});
   @override
   _CalendarState createState() => _CalendarState();
 }
@@ -32,58 +31,44 @@ Widget customDayBuilder(
 }
 
 class _CalendarState extends State<Calendar> {
-  DateTime _currentDate;
+  // DateTime _currentDate;
   bool isShrinked = false;
+  CalendarController _calendarController = CalendarController();
   @override
   Widget build(BuildContext context) {
     return Container(
       width: widget.width ?? double.infinity,
       decoration: new BoxDecoration(
-        color: widget.color ??  Color(0xff0085FF),
+        color: widget.color ?? Color(0xff0085FF),
         borderRadius: BorderRadius.all(Radius.circular(30.0)),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          CalendarCarousel<Event>(
-            onDayPressed: (DateTime dateTime, List<dynamic> tempList) {},
-            thisMonthDayBorderColor: Colors.grey,
-            selectedDateTime: _currentDate,
-            headerTitleTouchable: true,
-            height: isShrinked
-                ? MediaQuery.of(context).size.height * 0.23
-                : MediaQuery.of(context).size.height * 0.50,
-            //Selected date styles
-            selectedDayButtonColor: const Color(0xffb6bfcf),
-            selectedDayTextStyle: TextStyle(color: Colors.white),
-            //header text styles
-            headerTextStyle: TextStyle(color: Colors.white, fontSize: 20.0),
-            iconColor: Colors.white,
-            //week days text styles
-            weekdayTextStyle: TextStyle(color: Colors.white),
-            //today text styles
-            todayButtonColor: Colors.white,
-            todayTextStyle: TextStyle(color: Colors.black),
-            //all days text color
-            daysTextStyle: TextStyle(color: Colors.white),
-            //weekend days text color
-            weekendTextStyle: TextStyle(color: Colors.white),
-            weekFormat: isShrinked,
-          ),
-          Center(
-            child: FlatButton(
-              onPressed: () {
-                setState(() {
-                  isShrinked = !isShrinked;
-                });
-              },
-              child: Icon(
-                isShrinked ? Icons.arrow_drop_down : Icons.arrow_drop_up,
-                color: Colors.white,
-              ),
-            ),
-          )
-        ],
+      child: TableCalendar(
+        calendarController: _calendarController,
+        initialCalendarFormat: CalendarFormat.month,
+        availableCalendarFormats: const {
+          CalendarFormat.month: 'Month',
+          CalendarFormat.week: 'Week',
+        },
+        calendarStyle: CalendarStyle(
+          selectedColor: Colors.white,
+          selectedStyle: TextStyle().copyWith(color: Colors.black),
+          todayColor: Colors.grey[400],
+          todayStyle: TextStyle().copyWith(color: Colors.black),
+          holidayStyle: TextStyle().copyWith(color: Colors.white),
+          weekendStyle: TextStyle().copyWith(color: Colors.white),
+          outsideWeekendStyle: TextStyle().copyWith(color: Colors.white),
+        ),
+        daysOfWeekStyle: DaysOfWeekStyle(
+          weekendStyle: TextStyle().copyWith(color: Colors.white),
+        ),
+        headerStyle: HeaderStyle(
+            leftChevronIcon: Icon(Icons.keyboard_arrow_left),
+            rightChevronIcon: Icon(Icons.keyboard_arrow_right),
+            formatButtonDecoration: BoxDecoration(
+              color: Colors.transparent,
+            )),
+            onDaySelected: (DateTime date, _) => debugPrint(date.toString()),
+            onUnavailableDaySelected: () => debugPrint("Go to next month"),
       ),
     );
   }

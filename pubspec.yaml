@@ -20,7 +20,7 @@ dependencies:
   flutter:
     sdk: flutter
   rxdart: ^0.22.3
-  flutter_calendar_carousel: ^1.4.1
+  table_calendar: ^2.1.0
   uuid: ^2.0.2
   flutter_datetime_picker: ^1.2.6
   sqflite: ^1.1.7+1

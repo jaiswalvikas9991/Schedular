@@ -15,6 +15,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  DateTime dateTime;
+
   List<Widget> renderTodos(List<TodoBloc> allTodo) {
     List<Widget> todoWidgets = [];
     for (int i = 0; i < allTodo.length; i++)
@@ -34,6 +37,7 @@ class _HomeState extends State<Home> {
             Calendar(
               width: MediaQuery.of(context).size.width * 0.95,
               color: Theme.of(context).primaryColor,
+              onDayPressed: (DateTime dateTime) => this.dateTime = dateTime
             ),
             Divider(
               color: Colors.black,
