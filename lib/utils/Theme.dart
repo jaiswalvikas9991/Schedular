@@ -16,7 +16,7 @@ ThemeData theme(){
         color: Colors.white
       ),
       body2: base.body2.copyWith(
-        color: Colors.black
+        color: Colors.black,
       )
     );
   }

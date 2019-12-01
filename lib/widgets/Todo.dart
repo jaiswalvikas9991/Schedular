@@ -51,24 +51,22 @@ class _TodoState extends State<Todo> {
           stream: widget.todoBloc.contentObservable,
           initialData: "Click on Edit",
           builder: (context, AsyncSnapshot<String> snapshot) {
-            return snapshot.hasData
-                ? this._isBeingEdited
-                    ? TextField(
-                        key: UniqueKey(),
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          labelText: 'Write down a quick todo...',
-                        ),
-                        controller: _textController,
-                      )
-                    : Text(
-                        snapshot.data,
-                        style: Theme.of(context).textTheme.body2,
-                        key: UniqueKey(),
-                      )
-                : Container();
+            return this._isBeingEdited
+                ? TextField(
+                    key: UniqueKey(),
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      labelText: 'Write down a quick todo...',
+                    ),
+                    controller: _textController,
+                  )
+                : Text(
+                    snapshot.data,
+                    style: Theme.of(context).textTheme.body2,
+                    key: UniqueKey(),
+                  );
           }),
     );
   }
@@ -78,14 +76,12 @@ class _TodoState extends State<Todo> {
         stream: widget.todoBloc.isCheckedObservable,
         initialData: false,
         builder: (context, AsyncSnapshot<bool> snapshot) {
-          return snapshot.hasData
-              ? CCheckBox(
-                  value: snapshot.data,
-                  onTap: () {
-                    widget.todoBloc.updateCheckedState(!snapshot.data);
-                  },
-                )
-              : Container();
+          return CCheckBox(
+            value: snapshot.data,
+            onTap: () {
+              widget.todoBloc.updateCheckedState(!snapshot.data);
+            },
+          );
         });
   }
 

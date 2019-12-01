@@ -1,33 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:schedular/bloc/TodoListBloc.dart';
+import 'package:schedular/utils/Provider.dart';
 
 class Calendar extends StatefulWidget {
   final double width;
   final Color color;
   final Function onDayPressed;
-  Calendar({this.width, this.color, @required this.onDayPressed});
+  final Function setDate;
+  Calendar({this.width, this.color, @required this.onDayPressed, this.setDate});
   @override
   _CalendarState createState() => _CalendarState();
-}
-
-Widget customDayBuilder(
-  bool isSelectable,
-  int index,
-  bool isSelectedDay,
-  bool isToday,
-  bool isPrevMonthDay,
-  TextStyle textStyle,
-  bool isNextMonthDay,
-  bool isThisMonthDay,
-  DateTime day,
-) {
-  if (day.day == 15) {
-    return Center(
-      child: Icon(Icons.local_airport),
-    );
-  } else {
-    return null;
-  }
 }
 
 class _CalendarState extends State<Calendar> {
@@ -36,9 +19,10 @@ class _CalendarState extends State<Calendar> {
   CalendarController _calendarController = CalendarController();
   @override
   Widget build(BuildContext context) {
+    final TodoListBloc _todoListBloc = Provider.of<TodoListBloc>(context);
     return Container(
       width: widget.width ?? double.infinity,
-      decoration: new BoxDecoration(
+      decoration: BoxDecoration(
         color: widget.color ?? Color(0xff0085FF),
         borderRadius: BorderRadius.all(Radius.circular(30.0)),
       ),
@@ -67,9 +51,15 @@ class _CalendarState extends State<Calendar> {
             formatButtonDecoration: BoxDecoration(
               color: Colors.transparent,
             )),
-            onDaySelected: (DateTime date, _) => debugPrint(date.toString()),
-            onUnavailableDaySelected: () => debugPrint("Go to next month"),
+        onDaySelected: (DateTime date, _) => _todoListBloc.setDate(date),
+        onUnavailableDaySelected: () => debugPrint("Go to next month"),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _calendarController.dispose();
+    super.dispose();
   }
 }

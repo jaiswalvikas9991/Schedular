@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schedular/screens/Edit.dart';
+import 'package:schedular/screens/Edit2.dart';
 import 'package:schedular/widgets/CCheckBox.dart';
 
 class PlanTile extends StatefulWidget {

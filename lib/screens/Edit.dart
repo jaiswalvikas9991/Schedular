@@ -1,229 +1,156 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:schedular/widgets/CCheckBox.dart';
 
 class Edit extends StatefulWidget {
   Edit({Key key}) : super(key: key);
 
+  @override
   _EditState createState() => _EditState();
 }
 
 class _EditState extends State<Edit> {
-  TextEditingController _headingController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Stack(
           children: <Widget>[
-            CustomPaint(
-              painter: BackPainter(),
-              child: SizedBox(
-                height: 200,
-                width: double.infinity,
-              ),
-            ),
-            Expanded(
-              child: ListView(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Card(
-                        child: TextField(
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            labelText: 'Give a Heading to out Task',
+            ListView(
+              children: <Widget>[
+                _renderImage(context),
+                Text("30 th Novemeber", style: Theme.of(context).textTheme.body2,),
+                Text("Time to and from", style: Theme.of(context).textTheme.body2,),
+
+                Row(
+                  children: <Widget>[
+                    Text(
+                      "Description of the Task",
+                      style: Theme.of(context).textTheme.body2,
+                    ),
+                    GestureDetector(
+                      onTap: () {},
+                      child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          child: Icon(Icons.edit)),
+                    )
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: Container(
+                        width: 80,
+                        height: 80,
+                        child: Icon(
+                          Icons.notifications,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: Container(
+                        width: 80,
+                        height: 80,
+                        child: Icon(
+                          Icons.alarm,
+                          color: Colors.black,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text("Rating", style: Theme.of(context).textTheme.body2),
+                    Row(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(
+                            Icons.star,
+                            color: Colors.black,
                           ),
-                          controller: _headingController,
+                          onPressed: () {},
                         ),
-                      ),
-                      Card(
-                        child: TextField(
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            labelText: 'Describe me your Task',
+                        IconButton(
+                          icon: Icon(
+                            Icons.star,
+                            color: Colors.black,
                           ),
-                          controller: _descriptionController,
+                          onPressed: () {},
                         ),
-                      ),
-                      Card(
-                        child: Row(
-                          children: <Widget>[
-                            FlatButton(
-                              child: Text(
-                                'Start Time',
-                                style: Theme.of(context).textTheme.body2,
-                              ),
-                              onPressed: () {
-                                DatePicker.showTimePicker(context, showTitleActions: true,
-                                    onChanged: (date) {
-                                  print('change $date');
-                                }, onConfirm: (date) {
-                                  print('confirm $date');
-                                }, currentTime: DateTime.now(), locale: LocaleType.en);
-                              },
-                            ),
-                            Expanded(
-                              child: Icon(
-                                Icons.keyboard_arrow_right,
-                                color: Colors.black,
-                              ),
-                            ),
-                            FlatButton(
-                              child: Text(
-                                'End Time',
-                                style: Theme.of(context).textTheme.body2,
-                              ),
-                              onPressed: () {
-                                DatePicker.showTimePicker(context, showTitleActions: true,
-                                    onChanged: (date) {
-                                  print('change $date');
-                                }, onConfirm: (date) {
-                                  print('confirm $date');
-                                }, currentTime: DateTime.now(), locale: LocaleType.en);
-                              },
-                            ),
-                          ],
+                        IconButton(
+                          icon: Icon(
+                            Icons.star,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {},
                         ),
-                      ),
-                      Card(
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              'Priority',
-                              style: Theme.of(context).textTheme.body2,
-                            )
-                          ],
+                        IconButton(
+                          icon: Icon(
+                            Icons.star,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {},
                         ),
-                      ),
-                      Card(
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              'Rating',
-                              style: Theme.of(context).textTheme.body2,
-                            )
-                          ],
+                        IconButton(
+                          icon: Icon(
+                            Icons.star,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {},
                         ),
-                      ),
-                      Card(
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              'Alarm',
-                              style: Theme.of(context).textTheme.body2,
-                            ),
-                            Expanded(
-                              child: Icon(
-                                Icons.keyboard_arrow_right,
-                                color: Colors.black,
-                              ),
-                            ),
-                            FlatButton(
-                              child: Text(
-                                'Time Here',
-                                style: Theme.of(context).textTheme.body2,
-                              ),
-                              onPressed: () {},
-                            )
-                          ],
-                        ),
-                      ),
-                      Card(
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              'Notification',
-                              style: Theme.of(context).textTheme.body2,
-                            ),
-                            Expanded(
-                              child: Container(),
-                            ),
-                            CCheckBox(
-                              onTap: () {},
-                              value: false,
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
+                      ],
+                    )
+                  ],
+                )
+              ],
             ),
+            _renderBack(),
           ],
         ),
       ),
     );
   }
-}
 
-
-class BackPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    Path path = Path();
-    Paint paint = Paint();
-
-    path.lineTo(0, size.height * 0.75);
-    path.quadraticBezierTo(size.width * 0.10, size.height * 0.70,
-        size.width * 0.17, size.height * 0.90);
-    path.quadraticBezierTo(
-        size.width * 0.20, size.height, size.width * 0.25, size.height * 0.90);
-    path.quadraticBezierTo(size.width * 0.40, size.height * 0.40,
-        size.width * 0.50, size.height * 0.70);
-    path.quadraticBezierTo(size.width * 0.60, size.height * 0.85,
-        size.width * 0.65, size.height * 0.65);
-    path.quadraticBezierTo(
-        size.width * 0.70, size.height * 0.90, size.width, 0);
-    path.close();
-
-    paint.color = Colors.red;
-    canvas.drawPath(path, paint);
-
-    path = Path();
-    path.lineTo(0, size.height * 0.50);
-    path.quadraticBezierTo(size.width * 0.10, size.height * 0.80,
-        size.width * 0.15, size.height * 0.60);
-    path.quadraticBezierTo(size.width * 0.20, size.height * 0.45,
-        size.width * 0.27, size.height * 0.60);
-    path.quadraticBezierTo(
-        size.width * 0.45, size.height, size.width * 0.50, size.height * 0.80);
-    path.quadraticBezierTo(size.width * 0.55, size.height * 0.45,
-        size.width * 0.75, size.height * 0.75);
-    path.quadraticBezierTo(
-        size.width * 0.85, size.height * 0.93, size.width, size.height * 0.60);
-    path.lineTo(size.width, 0);
-    path.close();
-
-    paint.color = Color(0xffffaece);
-    canvas.drawPath(path, paint);
-
-    path = Path();
-    path.lineTo(0, size.height * 0.75);
-    path.quadraticBezierTo(size.width * 0.10, size.height * 0.55,
-        size.width * 0.22, size.height * 0.70);
-    path.quadraticBezierTo(size.width * 0.30, size.height * 0.90,
-        size.width * 0.40, size.height * 0.75);
-    path.quadraticBezierTo(size.width * 0.52, size.height * 0.50,
-        size.width * 0.65, size.height * 0.70);
-    path.quadraticBezierTo(
-        size.width * 0.75, size.height * 0.85, size.width, size.height * 0.60);
-    path.lineTo(size.width, 0);
-    path.close();
-
-    paint.color = Color(0xff89f7fe);
-    canvas.drawPath(path, paint);
+  Container _renderImage(BuildContext context) {
+    return Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.width,
+        transform: Matrix4.translationValues(
+            MediaQuery.of(context).size.width * -0.2,
+            MediaQuery.of(context).size.height * -0.1,
+            0),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage(
+                  "https://images.pexels.com/photos/259698/pexels-photo-259698.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260")),
+          borderRadius: BorderRadius.all(
+              Radius.circular(MediaQuery.of(context).size.width)),
+          color: Colors.redAccent,
+        ));
   }
 
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return oldDelegate != this;
+  Positioned _renderBack() {
+    return Positioned(
+      top: 0,
+      left: 0,
+      child: SafeArea(
+        child: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: CircleAvatar(
+              backgroundColor: Colors.white, child: Icon(Icons.arrow_back_ios)),
+        ),
+      ),
+    );
   }
 }

@@ -12,37 +12,59 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  int _selectedIndex = 0;
-  final PageStorageBucket bucket = PageStorageBucket();
-  final List<Widget> _widgetList = [
-    Home(key: PageStorageKey('Home')),
-    Plan(key: PageStorageKey('Plan')),
-    Container()
-  ];
+class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
+  int _selectedTab = 0;
+  TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  Widget _buildTabContent() {
+    return TabBarView(
+      controller: _tabController,
+      physics: const NeverScrollableScrollPhysics(),
+      children: [Home(), Plan(), Container()],
+    );
+  }
+
+  void _changeTab(int newIndex) {
+    this.setState(() {
+      this._selectedTab = newIndex;
+      this._tabController.index = newIndex;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Schedular',
       theme: theme(),
-      home: SafeArea(
-          child: Scaffold(
+      home: Scaffold(
         body: BlocProvider<TodoListBloc>(
-          builder: (_,bloc) => bloc ?? TodoListBloc(),
-          child: _widgetList[this._selectedIndex],
+          builder: (_, bloc) => bloc ?? TodoListBloc(),
+          child: _buildTabContent(),
           onDispose: (_, bloc) => bloc.dispose(),
         ),
-        bottomNavigationBar: buildBottomNavBar(context),
-      )),
+        bottomNavigationBar:
+            buildBottomNavBar(context, this._selectedTab, this._changeTab),
+      ),
     );
   }
 
-  ClipRRect buildBottomNavBar(BuildContext context) {
+  ClipRRect buildBottomNavBar(
+      BuildContext context, int selectedTab, Function changeTab) {
     return ClipRRect(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(40),
-          topLeft: Radius.circular(40),
-        ),
+      borderRadius: BorderRadius.only(
+        topRight: Radius.circular(40),
+        topLeft: Radius.circular(40),
+        bottomLeft: Radius.circular(40),
+        bottomRight: Radius.circular(40),
+      ),
+      child: Card(
+        elevation: 0.0,
         child: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
@@ -60,19 +82,17 @@ class _MyAppState extends State<MyApp> {
           ],
           unselectedItemColor: Colors.grey,
           selectedItemColor: Theme.of(context).primaryColor,
-          currentIndex: _selectedIndex,
+          currentIndex: selectedTab,
           showUnselectedLabels: true,
-          onTap: (int selectedIndex) {
-            setState(() {
-              this._selectedIndex = selectedIndex;
-            });
-          },
+          onTap: changeTab,
         ),
-      );
+      ),
+    );
   }
 
   @override
   void dispose() {
+    _tabController.dispose();
     super.dispose();
   }
 }
