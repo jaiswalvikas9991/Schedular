@@ -21,6 +21,7 @@ class TodoListBloc {
   Observable<DateTime> get dateTimeObservable => _subjectDateTime.stream;
 
 
+  // Experimental central date time store
   void setDate(DateTime date){
     this._selectedDate = date;
     _subjectDateTime.add(this._selectedDate);
@@ -43,13 +44,14 @@ class TodoListBloc {
     return null;
   }
 
+  // This is a helper function
   Map<String, dynamic> _getTodoDataById(String id){
     for (int i = 0; i < this._allTodoData.length; i++) if (this._allTodoData[i]['id'] == id) return this._allTodoData[i];
     return {};
   } 
 
   
-
+  // This method just updates the main data not the stream
   void upDateData(String id, String childKey, dynamic newValue){
     Map<String, dynamic> _updateTodo = _getTodoDataById(id);
 

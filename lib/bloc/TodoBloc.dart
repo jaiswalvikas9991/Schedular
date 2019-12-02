@@ -1,6 +1,7 @@
 import 'package:rxdart/rxdart.dart';
 
 class TodoBloc {
+  // Real Data
   String id;
   bool _isChecked;
   String _content;

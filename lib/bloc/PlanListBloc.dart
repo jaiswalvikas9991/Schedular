@@ -1,39 +1,33 @@
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
+import 'package:schedular/bloc/PlanBloc.dart';
 
 class PlanListBloc{
   static final randomId = Uuid();
-  List<Map<String, dynamic>> _allPlanData = [];
+  List<PlanBloc> _allPlan = [];
 
-  BehaviorSubject<List<Map<String,dynamic>>> _subjectAllPlan;
+  BehaviorSubject<List<PlanBloc>> _subjectAllPlan;
 
   PlanListBloc(){
-    _subjectAllPlan = new BehaviorSubject<List<Map<String,dynamic>>>.seeded([]);
+    _subjectAllPlan = new BehaviorSubject<List<PlanBloc>>();
   }
 
-  Observable<List<Map<String,dynamic>>> get allPlanObservable => _subjectAllPlan.stream;
+  Observable<List<PlanBloc>> get allPlanObservable => _subjectAllPlan.stream;
 
-  void addTodo(){
-    this._allPlanData.add({ 'id' : randomId.v1(), 'content' : '', 'isChecked' : false});
-    _subjectAllPlan.sink.add(this._allPlanData);
+  void addPlan(){
+    this._allPlan.add(PlanBloc(randomId.v1()));
+    _subjectAllPlan.sink.add(this._allPlan);
   }
 
-  void deleteTodo(String id){
-    this._allPlanData.removeAt(this._allPlanData.indexOf(_getTodoById(id)));
-    _subjectAllPlan.sink.add(this._allPlanData);
+  void deletePlan(String id){
+    this._allPlan.removeAt(this._allPlan.indexOf(_getPlanById(id)));
+    _subjectAllPlan.sink.add(this._allPlan);
   }
 
-  void updateTodoContent(String content, String id){
-    if(this._getTodoById(id)['content'] == content) this._getTodoById(id)['content'] = content;
-  }
-
-  void updateTodoIsChecked(bool isChecked, String id){
-    this._getTodoById(id)['isChecked'] = isChecked;
-  }
-
-  Map<String, dynamic> _getTodoById(String id){
-    for(int i = 0; i < this._allPlanData.length ; i++) if(this._allPlanData[i]['id'] == id) return this._allPlanData[i];
-    return {};
+  // Helper Method
+  PlanBloc _getPlanById(String id){
+    for(int i = 0; i < this._allPlan.length ; i++) if(this._allPlan[i].id == id) return this._allPlan[i];
+    return null;
   }
 
    void dispose() {

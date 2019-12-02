@@ -17,18 +17,20 @@ class _TodoState extends State<Todo> {
   bool _isBeingEdited = false;
 
   Widget renderButtonBar(BuildContext context) {
-    final TodoListBloc _todoListBloc = Provider.of(context);
+    final TodoListBloc _todoListBloc = Provider.of<TodoListBloc>(context);
     return ButtonTheme.bar(
       // make buttons use the appropriate styles for cards
       child: ButtonBar(
         children: <Widget>[
           FlatButton(
+            textColor: Color(0xff48c6ef),
             child: const Text('DELETE'),
             onPressed: () {
               _todoListBloc.deleteTodo(widget.todoBloc.id);
             },
           ),
           FlatButton(
+            textColor: Color(0xff48c6ef),
             child: Text(this._isBeingEdited ? 'SAVE' : 'EDIT'),
             onPressed: () {
               if (this._isBeingEdited == true &&
@@ -51,6 +53,7 @@ class _TodoState extends State<Todo> {
           stream: widget.todoBloc.contentObservable,
           initialData: "Click on Edit",
           builder: (context, AsyncSnapshot<String> snapshot) {
+            this._textController.text = snapshot.data;
             return this._isBeingEdited
                 ? TextField(
                     key: UniqueKey(),

@@ -13,7 +13,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  DateTime dateTime;
+  DateTime dateTime; // This keeps track of which date was selected
 
   List<Widget> renderTodos(List<TodoBloc> allTodo) {
     List<Widget> todoWidgets = [];
@@ -24,41 +24,41 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final TodoListBloc _todoListBloc = Provider.of<TodoListBloc>(context);
     return Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 20.0,
-              ),
-              Calendar(
-                width: MediaQuery.of(context).size.width * 0.95,
-                color: Theme.of(context).primaryColor,
-                onDayPressed: (DateTime dateTime) => this.dateTime = dateTime,
-              ),
-              Divider(
-                color: Colors.black,
-                indent: 20,
-                endIndent: 20,
-              ),
-              StreamBuilder<List<TodoBloc>>(
-                  stream: _todoListBloc.allTodoObservable,
-                  builder: (context, AsyncSnapshot<List<TodoBloc>> snapshot) {
-                    return snapshot.hasData
-                        ? Expanded(
-                            child: ListView(
-                              children: this.renderTodos(snapshot.data),
-                            ),
-                          )
-                        : Container();
-                  })
-            ],
-          ),
+      body: SafeArea(
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.03,
+            ),
+            Calendar(
+              width: MediaQuery.of(context).size.width * 0.95,
+              color: Theme.of(context).primaryColor,
+              onDayPressed: (DateTime dateTime) => this.dateTime = dateTime,
+            ),
+            Divider(
+              color: Colors.black,
+              indent: MediaQuery.of(context).size.width * 0.06,
+              endIndent: MediaQuery.of(context).size.width * 0.06,
+            ),
+            StreamBuilder<List<TodoBloc>>(
+                stream: _todoListBloc.allTodoObservable,
+                builder: (context, AsyncSnapshot<List<TodoBloc>> snapshot) {
+                  return snapshot.hasData
+                      ? Expanded(
+                          child: ListView(
+                            children: this.renderTodos(snapshot.data),
+                          ),
+                        )
+                      : Container();
+                })
+          ],
         ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: _todoListBloc.addTodo,
-        ),
-      );
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: _todoListBloc.addTodo,
+      ),
+    );
   }
 
   @override

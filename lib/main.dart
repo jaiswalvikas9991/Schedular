@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:schedular/bloc/PlanListBloc.dart';
 import 'package:schedular/bloc/TodoListBloc.dart';
 import 'package:schedular/screens/Home.dart';
 import 'package:schedular/screens/Plan.dart';
 import 'package:schedular/utils/Theme.dart';
 import 'package:schedular/utils/Provider.dart';
+import 'package:line_icons/line_icons.dart';
 
 void main() => runApp(MyApp());
 
@@ -43,10 +45,14 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       title: 'Schedular',
       theme: theme(),
       home: Scaffold(
-        body: BlocProvider<TodoListBloc>(
-          builder: (_, bloc) => bloc ?? TodoListBloc(),
-          child: _buildTabContent(),
+        body: BlocProvider<PlanListBloc>(
+          builder: (_, bloc) => bloc ?? PlanListBloc(),
           onDispose: (_, bloc) => bloc.dispose(),
+          child: BlocProvider<TodoListBloc>(
+            builder: (_, bloc) => bloc ?? TodoListBloc(),
+            child: _buildTabContent(),
+            onDispose: (_, bloc) => bloc.dispose(),
+          ),
         ),
         bottomNavigationBar:
             buildBottomNavBar(context, this._selectedTab, this._changeTab),
@@ -68,16 +74,16 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
         child: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Text('Home'),
+              icon: Icon(LineIcons.home),
+              title: Text(''),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today),
-              title: Text('Plan'),
+              icon: Icon(LineIcons.pencil),
+              title: Text(''),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.pie_chart),
-              title: Text('Dashboard'),
+              icon: Icon(LineIcons.line_chart),
+              title: Text(''),
             ),
           ],
           unselectedItemColor: Colors.grey,
