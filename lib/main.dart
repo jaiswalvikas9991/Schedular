@@ -3,6 +3,7 @@ import 'package:schedular/bloc/PlanListBloc.dart';
 import 'package:schedular/bloc/TodoListBloc.dart';
 import 'package:schedular/screens/Home.dart';
 import 'package:schedular/screens/Plan.dart';
+import 'package:schedular/utils/DBProvider.dart';
 import 'package:schedular/utils/Theme.dart';
 import 'package:schedular/utils/Provider.dart';
 import 'package:line_icons/line_icons.dart';
@@ -17,6 +18,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   int _selectedTab = 0;
   TabController _tabController;
+  String _centralDate = DateTime.now().toString().substring(0,11).replaceAll(' ', '');
 
   @override
   void initState() {
@@ -24,11 +26,19 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     _tabController = TabController(length: 3, vsync: this);
   }
 
+  bool changeCentralDate(String date){
+    if(this._centralDate != date){
+      this._centralDate = date;
+      return(true);
+    }
+    return(false);
+  }
+
   Widget _buildTabContent() {
     return TabBarView(
       controller: _tabController,
       physics: const NeverScrollableScrollPhysics(),
-      children: [Home(), Plan(), Container()],
+      children: [Home(this.changeCentralDate), Plan(this._centralDate), Container()],
     );
   }
 
@@ -100,5 +110,6 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   void dispose() {
     _tabController.dispose();
     super.dispose();
+    DBProvider.db.dispose();
   }
 }

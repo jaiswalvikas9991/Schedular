@@ -4,18 +4,16 @@ import 'package:schedular/bloc/TodoListBloc.dart';
 import 'package:schedular/utils/Provider.dart';
 import 'package:schedular/widgets/Calendar.dart';
 import 'package:schedular/widgets/Todo.dart';
-// import 'package:schedular/utils/DBProvider.dart';
+import 'package:schedular/bloc/PlanListBloc.dart';
 
 class Home extends StatefulWidget {
-  final String title;
-  Home({Key key, this.title}) : super(key: key);
+  final Function changeCentralDate;
+  Home(this.changeCentralDate, {Key key}) : super(key: key);
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  DateTime dateTime; // This keeps track of which date was selected
-
   List<Widget> renderTodos(List<TodoBloc> allTodo) {
     List<Widget> todoWidgets = [];
     for (int i = 0; i < allTodo.length; i++) todoWidgets.add(Todo(allTodo[i]));
@@ -24,6 +22,7 @@ class _HomeState extends State<Home> {
 
   Widget build(BuildContext context) {
     final TodoListBloc _todoListBloc = Provider.of<TodoListBloc>(context);
+    final PlanListBloc _planListBloc = Provider.of<PlanListBloc>(context);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -32,10 +31,20 @@ class _HomeState extends State<Home> {
               height: MediaQuery.of(context).size.height * 0.03,
             ),
             Calendar(
-              width: MediaQuery.of(context).size.width * 0.95,
-              color: Theme.of(context).primaryColor,
-              onDayPressed: (DateTime dateTime) => this.dateTime = dateTime,
-            ),
+                width: MediaQuery.of(context).size.width * 0.95,
+                color: Theme.of(context).primaryColor,
+                onDayPressed: (DateTime dateTime) {
+                  bool isChanged = widget.changeCentralDate(
+                      dateTime.toString().substring(0, 11).replaceAll(' ', ''));
+
+                  if (isChanged) {
+                    _planListBloc.clearALlPlan();
+                    _planListBloc.initialRender(dateTime
+                        .toString()
+                        .substring(0, 11)
+                        .replaceAll(' ', ''));
+                  }
+                }),
             Divider(
               color: Colors.black,
               indent: MediaQuery.of(context).size.width * 0.06,

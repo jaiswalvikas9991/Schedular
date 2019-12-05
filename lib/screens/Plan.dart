@@ -5,13 +5,13 @@ import 'package:schedular/widgets/PlanCard.dart';
 import 'package:schedular/utils/Provider.dart';
 
 class Plan extends StatefulWidget {
-  Plan({Key key}) : super(key: key);
+  final String date;
+  Plan(this.date, {Key key}) : super(key: key);
 
   _PlanState createState() => _PlanState();
 }
 
 class _PlanState extends State<Plan> {
-  PlanListBloc _planListBloc = new PlanListBloc();
   PageController _pageController = new PageController(viewportFraction: 0.8);
   int _currentPage = 0; // This variable keeps track of which page is in the current view
   
@@ -57,7 +57,7 @@ class _PlanState extends State<Plan> {
             children: <Widget>[
               IconButton(icon : Icon(Icons.add , size: 40,) , color: Theme.of(context).primaryColor,
                 onPressed: (){
-                  _planListBloc.addPlan();
+                  _planListBloc.addPlan(widget.date);
                 },
               )
             ],
@@ -88,7 +88,6 @@ class _PlanState extends State<Plan> {
   @override
   void dispose() {
     super.dispose();
-    _planListBloc.dispose();
     _pageController.dispose();
   }
 }

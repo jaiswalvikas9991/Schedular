@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:schedular/bloc/PlanBloc.dart';
 import 'package:schedular/bloc/TodoBloc.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -22,12 +22,22 @@ class DBProvider {
 
   initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "test2.db");
+    String path = join(documentsDirectory.path, "test9.db");
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE todo ("
           "id TEXT PRIMARY KEY,"
           "content TEXT,"
+          "isChecked BIT"
+          ")");
+      await db.execute("CREATE TABLE plan ("
+          "id TEXT PRIMARY KEY,"
+          "description TEXT,"
+          "rating INTEGER,"
+          "date TEXT,"
+          "fromTime TEXT,"
+          "toTime TEXT,"
+          "isNotification BIT,"
           "isChecked BIT"
           ")");
     });
@@ -52,26 +62,57 @@ class DBProvider {
     final db = await database;
     var res = await db.rawQuery("SELECT * FROM todo");
     List<TodoBloc> result = [];
-    debugPrint(res.toString());
-    for(int i = 0 ; i < res.length ; i++){
+    for (int i = 0; i < res.length; i++) {
       result.add(TodoBloc.fromMap(res[i]));
     }
-    List<TodoBloc> list =
-        res.isNotEmpty ? result : [];
+    List<TodoBloc> list = res.isNotEmpty ? result : [];
     return list;
   }
 
   // To update a todo
   updateTodo(Map<String, dynamic> todo) async {
     final db = await database;
-    debugPrint(todo.toString());
-    var res = await db.update("todo", todo,
-        where: "id = ?", whereArgs: [todo["id"]]);
+    var res =
+        await db.update("todo", todo, where: "id = ?", whereArgs: [todo["id"]]);
     return res;
   }
 
   deleteTodo(String id) async {
     final db = await database;
     db.delete("todo", where: "id = ?", whereArgs: [id]);
+  }
+
+  addPlan(PlanBloc planBloc) async {
+    final db = await database;
+    var res = await db.insert("plan", planBloc.toMap());
+    return res;
+  }
+
+  getPlanByDate(String date) async {
+    final db = await database;
+    var res = await db.query("plan", where: "date = ?", whereArgs: [date]);
+    List<PlanBloc> result = [];
+    for (int i = 0; i < res.length; i++) {
+      result.add(PlanBloc.fromMap(res[i]));
+    }
+    List<PlanBloc> list = res.isNotEmpty ? result : [];
+    return list;
+  }
+
+  updatePlan(Map<String, dynamic> plan) async {
+    final db = await database;
+    var res =
+        await db.update("plan", plan, where: "id = ?", whereArgs: [plan["id"]]);
+    return res;
+  }
+
+  deletePlan(String id) async {
+    final db = await database;
+    db.delete("plan", where: "id = ?", whereArgs: [id]);
+  }
+
+  void dispose() async {
+    final db = await database;
+    db.close();
   }
 }

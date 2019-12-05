@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:schedular/bloc/TodoListBloc.dart';
-import 'package:schedular/utils/Provider.dart';
 
 class Calendar extends StatefulWidget {
   final double width;
@@ -19,7 +17,6 @@ class _CalendarState extends State<Calendar> {
   CalendarController _calendarController = CalendarController();
   @override
   Widget build(BuildContext context) {
-    final TodoListBloc _todoListBloc = Provider.of<TodoListBloc>(context);
     return Container(
       width: widget.width ?? double.infinity,
       decoration: BoxDecoration(
@@ -51,7 +48,7 @@ class _CalendarState extends State<Calendar> {
             formatButtonDecoration: BoxDecoration(
               color: Colors.transparent,
             )),
-        onDaySelected: (DateTime date, _) => _todoListBloc.setDate(date),
+        onDaySelected: (DateTime date, _) => widget.onDayPressed(date),
         onUnavailableDaySelected: () => debugPrint("Go to next month"),
       ),
     );

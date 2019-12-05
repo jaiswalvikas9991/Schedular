@@ -75,7 +75,7 @@ class _PlanCardState extends State<PlanCard> {
                       initialData: "Describe this awsome task to me......",
                       builder: (context, snapshot) {
                         return Text(
-                          snapshot.data,
+                          snapshot.data == '' ? "Describe this awsome task to me......" : snapshot.data,
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.normal),
                         );
@@ -85,7 +85,7 @@ class _PlanCardState extends State<PlanCard> {
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   StreamBuilder<bool>(
-                      stream: widget.planBloc.isAlarmObservable,
+                      stream: widget.planBloc.isNotificationObservable,
                       initialData: false,
                       builder: (context, snapshot) {
                         return IconButton(
