@@ -15,7 +15,7 @@ class TodoBloc {
     this._isChecked = isChecked ?? false;
     this._content = content ?? "";
     _subjectIsChecked = new BehaviorSubject<bool>.seeded(this._isChecked);
-    _subjectContent = new BehaviorSubject<String>.seeded(this._content);
+    _subjectContent = new BehaviorSubject<String>.seeded(this._content == '' ? "Click on Edit" : this._content);
   }
 
   // This constructor is used when the data is fetched from the database

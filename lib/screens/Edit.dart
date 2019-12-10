@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class Edit extends StatefulWidget {
   final String imageUrl;
   final PlanBloc planBloc;
-  Edit(this.imageUrl, this.planBloc, {Key key}) : super(key: key);
+  final String date;
+  Edit(this.imageUrl, this.planBloc, this.date, {Key key}) : super(key: key);
 
   @override
   _EditState createState() => _EditState();
@@ -14,6 +17,11 @@ class Edit extends StatefulWidget {
 class _EditState extends State<Edit> {
   final TextEditingController _textController = new TextEditingController();
   bool _isBeingEdited = false;
+
+  String _parseString(String date) {
+    List<String> splitString = date.split('-');
+    return ("${splitString[1]}/${splitString[2]}/${splitString[0]}");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +37,8 @@ class _EditState extends State<Edit> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      "30 TH Novemeber",
+                      DateFormat.yMMMEd().format(DateFormat.yMd('en_US')
+                          .parse(this._parseString(widget.date))),
                       style: TextStyle(color: Colors.black),
                     ),
                     SizedBox(
@@ -44,80 +53,12 @@ class _EditState extends State<Edit> {
                       height: 10,
                     ),
                     _renderTextField(context),
-                    Row(
-                      children: <Widget>[
-                        Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          child: Container(
-                            width: 80,
-                            height: 80,
-                            child: Icon(
-                              Icons.notifications,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                        Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          child: Container(
-                            width: 80,
-                            height: 80,
-                            child: Icon(
-                              Icons.alarm,
-                              color: Colors.black,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text("Rating",
                             style: Theme.of(context).textTheme.body2),
-                        Row(
-                          children: <Widget>[
-                            IconButton(
-                              icon: Icon(
-                                LineIcons.star_o,
-                                color: Colors.black,
-                              ),
-                              onPressed: () {},
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                LineIcons.star_o,
-                                color: Colors.black,
-                              ),
-                              onPressed: () {},
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                LineIcons.star_o,
-                                color: Colors.black,
-                              ),
-                              onPressed: () {},
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                LineIcons.star_o,
-                                color: Colors.black,
-                              ),
-                              onPressed: () {},
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                LineIcons.star_o,
-                                color: Colors.black,
-                              ),
-                              onPressed: () {},
-                            ),
-                          ],
-                        )
+                        _renderRating()
                       ],
                     )
                   ],
@@ -126,32 +67,112 @@ class _EditState extends State<Edit> {
             ],
           ),
           _renderBack(),
+          _renderNotificationIcon()
         ],
       ),
     );
+  }
+
+  StreamBuilder<int> _renderRating() {
+    return StreamBuilder<int>(
+        stream: widget.planBloc.ratingObservable,
+        initialData: 0,
+        builder: (context, snapshot) {
+          return Row(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(
+                  snapshot.data >= 1 ? LineIcons.star : LineIcons.star_o,
+                  color: snapshot.data >= 1
+                      ? Theme.of(context).primaryColor
+                      : Colors.black,
+                ),
+                onPressed: () {
+                  widget.planBloc.updateRating(1);
+                },
+              ),
+              IconButton(
+                icon: Icon(
+                  snapshot.data >= 2 ? LineIcons.star : LineIcons.star_o,
+                  color: snapshot.data >= 2
+                      ? Theme.of(context).primaryColor
+                      : Colors.black,
+                ),
+                onPressed: () {
+                  widget.planBloc.updateRating(2);
+                },
+              ),
+              IconButton(
+                icon: Icon(
+                  snapshot.data >= 3 ? LineIcons.star : LineIcons.star_o,
+                  color: snapshot.data >= 3
+                      ? Theme.of(context).primaryColor
+                      : Colors.black,
+                ),
+                onPressed: () {
+                  widget.planBloc.updateRating(3);
+                },
+              ),
+              IconButton(
+                icon: Icon(
+                  snapshot.data >= 4 ? LineIcons.star : LineIcons.star_o,
+                  color: snapshot.data >= 4
+                      ? Theme.of(context).primaryColor
+                      : Colors.black,
+                ),
+                onPressed: () {
+                  widget.planBloc.updateRating(4);
+                },
+              ),
+              IconButton(
+                icon: Icon(
+                  snapshot.data >= 5 ? LineIcons.star : LineIcons.star_o,
+                  color: snapshot.data >= 5
+                      ? Theme.of(context).primaryColor
+                      : Colors.black,
+                ),
+                onPressed: () {
+                  widget.planBloc.updateRating(5);
+                },
+              ),
+            ],
+          );
+        });
   }
 
   Row _renderEndTime(BuildContext context) {
     return Row(
       children: <Widget>[
         Text(
-          "End : ",
+          "End   : ",
           style: Theme.of(context).textTheme.body2.copyWith(fontSize: 18),
         ),
-        GestureDetector(
-          onTap: () {},
-          child: Row(
-            children: <Widget>[
-              Text("time",
-                  style:
-                      Theme.of(context).textTheme.body2.copyWith(fontSize: 18)),
-              Icon(
-                LineIcons.pencil,
-                color: Colors.black,
-              )
-            ],
-          ),
-        )
+        StreamBuilder<DateTime>(
+            stream: widget.planBloc.toTimeObservable,
+            builder: (context, snapshot) {
+              return GestureDetector(
+                onTap: () {
+                  DatePicker.showTimePicker(context,
+                      showTitleActions: true,
+                      onChanged: (time) {}, onConfirm: (time) {
+                    widget.planBloc.updateToTime(time);
+                  }, currentTime: DateTime.now(), locale: LocaleType.en);
+                },
+                child: Row(
+                  children: <Widget>[
+                    Text(DateFormat.jms().format(snapshot.data),
+                        style: Theme.of(context)
+                            .textTheme
+                            .body2
+                            .copyWith(fontSize: 18)),
+                    Icon(
+                      LineIcons.pencil,
+                      color: Theme.of(context).primaryColor,
+                    )
+                  ],
+                ),
+              );
+            })
       ],
     );
   }
@@ -163,20 +184,30 @@ class _EditState extends State<Edit> {
           "Start : ",
           style: Theme.of(context).textTheme.body2.copyWith(fontSize: 18),
         ),
-        GestureDetector(
-          onTap: () {},
-          child: Row(
-            children: <Widget>[
-              Text("time",
-                  style:
-                      Theme.of(context).textTheme.body2.copyWith(fontSize: 18)),
-              Icon(
-                LineIcons.pencil,
-                color: Colors.black,
-              )
-            ],
-          ),
-        )
+        StreamBuilder<DateTime>(
+            stream: widget.planBloc.fromTimeObservable,
+            builder: (context, snapshot) {
+              return GestureDetector(
+                onTap: () {
+                  DatePicker.showTimePicker(context,
+                      showTitleActions: true,
+                      onChanged: (time) {}, onConfirm: (time) {
+                    widget.planBloc.updateFromTime(time);
+                  }, currentTime: DateTime.now(), locale: LocaleType.en);
+                },
+                child: Row(
+                  children: <Widget>[
+                    Text(DateFormat.jms().format(snapshot.data),
+                        style: Theme.of(context)
+                            .textTheme
+                            .body2
+                            .copyWith(fontSize: 18)),
+                    Icon(LineIcons.pencil,
+                        color: Theme.of(context).primaryColor)
+                  ],
+                ),
+              );
+            })
       ],
     );
   }
@@ -201,7 +232,7 @@ class _EditState extends State<Edit> {
                         controller: _textController,
                       )
                     : Text(
-                        snapshot.data,
+                        snapshot.data == '' ? "Description" : snapshot.data,
                         style: TextStyle(
                             fontFamily: "Schyler",
                             fontSize: 35,
@@ -236,15 +267,12 @@ class _EditState extends State<Edit> {
       child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.width,
-          transform: Matrix4.translationValues(
-              MediaQuery.of(context).size.width * -0.2,
-              MediaQuery.of(context).size.height * -0.1,
-              0),
           decoration: BoxDecoration(
             image: DecorationImage(
                 fit: BoxFit.cover, image: NetworkImage(widget.imageUrl)),
-            borderRadius: BorderRadius.all(
-                Radius.circular(MediaQuery.of(context).size.width)),
+            borderRadius: BorderRadius.only(
+                bottomLeft:
+                    Radius.circular(MediaQuery.of(context).size.width * 0.5)),
             color: Colors.redAccent,
           )),
     );
@@ -265,6 +293,29 @@ class _EditState extends State<Edit> {
                 backgroundColor: Colors.white,
                 child: Icon(Icons.arrow_back_ios)),
           ),
+        ),
+      ),
+    );
+  }
+
+  Positioned _renderNotificationIcon() {
+    return Positioned(
+      top: 0,
+      right: 0,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: StreamBuilder<bool>(
+              stream: widget.planBloc.isNotificationObservable,
+              builder: (context, snapshot) {
+                return GestureDetector(
+                  onTap: widget.planBloc.updateNotificationState,
+                  child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: Icon(
+                          snapshot.data ? Icons.alarm_on : Icons.alarm_off)),
+                );
+              }),
         ),
       ),
     );

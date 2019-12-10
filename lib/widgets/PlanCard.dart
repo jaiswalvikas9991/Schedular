@@ -4,12 +4,14 @@ import 'package:schedular/bloc/PlanListBloc.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
 import 'package:schedular/screens/Edit.dart';
 import 'package:schedular/utils/Provider.dart';
+import 'package:intl/intl.dart';
 
 class PlanCard extends StatefulWidget {
   final bool active;
   final String imageUrl;
   final PlanBloc planBloc;
-  PlanCard(this.planBloc, this.active, this.imageUrl, {Key key})
+  final String date;
+  PlanCard(this.planBloc, this.active, this.imageUrl, this.date, {Key key})
       : super(key: key);
 
   @override
@@ -17,6 +19,11 @@ class PlanCard extends StatefulWidget {
 }
 
 class _PlanCardState extends State<PlanCard> {
+  String _parseString(String date) {
+    List<String> splitString = date.split('-');
+    return ("${splitString[1]}/${splitString[2]}/${splitString[0]}");
+  }
+
   @override
   Widget build(BuildContext context) {
     final PlanListBloc _planListBloc = Provider.of<PlanListBloc>(context);
@@ -50,9 +57,8 @@ class _PlanCardState extends State<PlanCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
-                  Column(
-                    children: <Widget>[Text("25TH"), Text("November")],
-                  ),
+                  Text(DateFormat.yMMMEd().format(DateFormat.yMd('en_US')
+                      .parse(this._parseString(widget.date)))),
                   IconButton(
                     icon: Icon(LineIcons.pencil),
                     onPressed: () {
@@ -60,8 +66,8 @@ class _PlanCardState extends State<PlanCard> {
                           context,
                           PageRouteBuilder(
                               transitionDuration: Duration(milliseconds: 800),
-                              pageBuilder: (_, __, ___) =>
-                                  Edit(widget.imageUrl, widget.planBloc)));
+                              pageBuilder: (_, __, ___) => Edit(widget.imageUrl,
+                                  widget.planBloc, widget.date)));
                     },
                   ),
                 ],
@@ -70,12 +76,12 @@ class _PlanCardState extends State<PlanCard> {
                 height: 20.0,
               ),
               Expanded(
-                  child: StreamBuilder<Object>(
+                  child: StreamBuilder<String>(
                       stream: widget.planBloc.descriptionObservable,
                       initialData: "Describe this awsome task to me......",
                       builder: (context, snapshot) {
                         return Text(
-                          snapshot.data == '' ? "Describe this awsome task to me......" : snapshot.data,
+                          snapshot.data,
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.normal),
                         );
@@ -90,8 +96,8 @@ class _PlanCardState extends State<PlanCard> {
                       builder: (context, snapshot) {
                         return IconButton(
                           icon: Icon(
-                              snapshot.data ? Icons.alarm : Icons.alarm_add),
-                          onPressed: () {},
+                              snapshot.data ? Icons.alarm_on : Icons.alarm_off),
+                          onPressed: widget.planBloc.updateNotificationState,
                         );
                       }),
                   IconButton(

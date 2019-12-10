@@ -66,7 +66,7 @@ class _TodoState extends State<Todo> {
                     controller: _textController,
                   )
                 : Text(
-                    snapshot.data == ''? "Click on Edit" : snapshot.data,
+                    snapshot.data,
                     style: Theme.of(context).textTheme.body2,
                     key: UniqueKey(),
                   );

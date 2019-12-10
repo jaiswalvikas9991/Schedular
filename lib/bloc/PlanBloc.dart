@@ -42,7 +42,7 @@ class PlanBloc {
 
     _subjectIsChecked.sink.add(this._isChecked);
     _subjectRating.sink.add(this._rating);
-    _subjectDescription.sink.add(this._description);
+    _subjectDescription.sink.add(this._description == '' ? "Describe this awsome task to me......" : this._description);
     _subjectFromTime.sink.add(this._fromTime);
     _subjectToTime.sink.add(this._toTime);
     _subjectIsNotification.sink.add(this._isNotification);
@@ -71,21 +71,47 @@ class PlanBloc {
       this._subjectIsNotification.stream;
   // Observable<bool> get isAlarmObservable => this._subjectIsAlarm.stream;
 
-  void updateCheckedState(bool isChecked) {
-    this._isChecked = isChecked;
+  void updateCheckedState() {
+    this._isChecked = !this._isChecked;
     _subjectIsChecked.sink.add(this._isChecked);
     DBProvider.db.updatePlan(this.toMap());
   }
 
   void updateRating(int rating) {
-    this._rating = rating;
-    _subjectRating.sink.add(this._rating);
-    DBProvider.db.updatePlan(this.toMap());
+    if (this._rating != rating) {
+      this._rating = rating;
+      _subjectRating.sink.add(this._rating);
+      DBProvider.db.updatePlan(this.toMap());
+    }
   }
 
   void updateDescription(String description) {
-    this._description = description;
-    _subjectDescription.sink.add(this._description);
+    if (this._description != description) {
+      this._description = description;
+      _subjectDescription.sink.add(this._description);
+      DBProvider.db.updatePlan(this.toMap());
+    }
+  }
+
+  void updateToTime(DateTime time) {
+    if (this._toTime != time) {
+      this._toTime = time;
+      this._subjectToTime.sink.add(this._toTime);
+      DBProvider.db.updatePlan(this.toMap());
+    }
+  }
+
+  void updateFromTime(DateTime time) {
+    if (this._fromTime != time) {
+      this._fromTime = time;
+      this._subjectFromTime.sink.add(this._fromTime);
+      DBProvider.db.updatePlan(this.toMap());
+    }
+  }
+
+  void updateNotificationState() {
+    this._isNotification = !this._isNotification;
+    _subjectIsNotification.sink.add(this._isNotification);
     DBProvider.db.updatePlan(this.toMap());
   }
 
@@ -109,4 +135,8 @@ class PlanBloc {
         "isNotification": this._isNotification ? 1 : 0,
         "date": this._date
       };
+
+
+    DateTime getFromTime() => this._fromTime;
+    int getRating() => this._rating;
 }

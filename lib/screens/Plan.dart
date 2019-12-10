@@ -40,7 +40,7 @@ class _PlanState extends State<Plan> {
 
 
   Widget _renderPage(bool active, PlanBloc planData, int currentIndex){
-    return PlanCard(planData,active, this.imageUrls[currentIndex % this.imageUrls.length]);
+    return PlanCard(planData,active, this.imageUrls[currentIndex % this.imageUrls.length], widget.date);
   }
 
   @override

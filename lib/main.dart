@@ -7,6 +7,7 @@ import 'package:schedular/utils/DBProvider.dart';
 import 'package:schedular/utils/Theme.dart';
 import 'package:schedular/utils/Provider.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:schedular/screens/Statistics.dart';
 
 void main() => runApp(MyApp());
 
@@ -38,7 +39,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     return TabBarView(
       controller: _tabController,
       physics: const NeverScrollableScrollPhysics(),
-      children: [Home(this.changeCentralDate), Plan(this._centralDate), Container()],
+      children: [Home(this.changeCentralDate), Plan(this._centralDate), Statistics()],
     );
   }
 
