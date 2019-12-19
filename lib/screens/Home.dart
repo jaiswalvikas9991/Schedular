@@ -6,14 +6,10 @@ import 'package:schedular/widgets/Calendar.dart';
 import 'package:schedular/widgets/Todo.dart';
 import 'package:schedular/bloc/PlanListBloc.dart';
 
-class Home extends StatefulWidget {
+class Home extends StatelessWidget {
   final Function changeCentralDate;
   Home(this.changeCentralDate, {Key key}) : super(key: key);
-  @override
-  _HomeState createState() => _HomeState();
-}
 
-class _HomeState extends State<Home> {
   List<Widget> renderTodos(List<TodoBloc> allTodo) {
     List<Widget> todoWidgets = [];
     for (int i = 0; i < allTodo.length; i++) todoWidgets.add(Todo(allTodo[i]));
@@ -34,7 +30,7 @@ class _HomeState extends State<Home> {
                 width: MediaQuery.of(context).size.width * 0.95,
                 color: Theme.of(context).primaryColor,
                 onDayPressed: (DateTime dateTime) {
-                  bool isChanged = widget.changeCentralDate(
+                  bool isChanged = this.changeCentralDate(
                       dateTime.toString().substring(0, 11).replaceAll(' ', ''));
 
                   if (isChanged) {
@@ -69,10 +65,5 @@ class _HomeState extends State<Home> {
         onPressed: _todoListBloc.addTodo,
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

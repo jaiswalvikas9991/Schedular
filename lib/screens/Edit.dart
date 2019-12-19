@@ -3,6 +3,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:schedular/widgets/Rating.dart';
 
 class Edit extends StatefulWidget {
   final String imageUrl;
@@ -58,7 +59,19 @@ class _EditState extends State<Edit> {
                       children: <Widget>[
                         Text("Rating",
                             style: Theme.of(context).textTheme.body2),
-                        _renderRating()
+                        StreamBuilder<int>(
+                          stream: widget.planBloc.ratingObservable,
+                          initialData: 0,
+                          builder: (context, snapshot) {
+                            return Rating(
+                              count: 5,
+                              onPressed: (int index){
+                                widget.planBloc.updateRating(index);
+                              },
+                              currentIndex: snapshot.data,
+                            );
+                          }
+                        )
                       ],
                     )
                   ],
@@ -73,72 +86,6 @@ class _EditState extends State<Edit> {
     );
   }
 
-  StreamBuilder<int> _renderRating() {
-    return StreamBuilder<int>(
-        stream: widget.planBloc.ratingObservable,
-        initialData: 0,
-        builder: (context, snapshot) {
-          return Row(
-            children: <Widget>[
-              IconButton(
-                icon: Icon(
-                  snapshot.data >= 1 ? LineIcons.star : LineIcons.star_o,
-                  color: snapshot.data >= 1
-                      ? Theme.of(context).primaryColor
-                      : Colors.black,
-                ),
-                onPressed: () {
-                  widget.planBloc.updateRating(1);
-                },
-              ),
-              IconButton(
-                icon: Icon(
-                  snapshot.data >= 2 ? LineIcons.star : LineIcons.star_o,
-                  color: snapshot.data >= 2
-                      ? Theme.of(context).primaryColor
-                      : Colors.black,
-                ),
-                onPressed: () {
-                  widget.planBloc.updateRating(2);
-                },
-              ),
-              IconButton(
-                icon: Icon(
-                  snapshot.data >= 3 ? LineIcons.star : LineIcons.star_o,
-                  color: snapshot.data >= 3
-                      ? Theme.of(context).primaryColor
-                      : Colors.black,
-                ),
-                onPressed: () {
-                  widget.planBloc.updateRating(3);
-                },
-              ),
-              IconButton(
-                icon: Icon(
-                  snapshot.data >= 4 ? LineIcons.star : LineIcons.star_o,
-                  color: snapshot.data >= 4
-                      ? Theme.of(context).primaryColor
-                      : Colors.black,
-                ),
-                onPressed: () {
-                  widget.planBloc.updateRating(4);
-                },
-              ),
-              IconButton(
-                icon: Icon(
-                  snapshot.data >= 5 ? LineIcons.star : LineIcons.star_o,
-                  color: snapshot.data >= 5
-                      ? Theme.of(context).primaryColor
-                      : Colors.black,
-                ),
-                onPressed: () {
-                  widget.planBloc.updateRating(5);
-                },
-              ),
-            ],
-          );
-        });
-  }
 
   Row _renderEndTime(BuildContext context) {
     return Row(

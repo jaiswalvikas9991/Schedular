@@ -18,8 +18,9 @@ class _TodoState extends State<Todo> {
 
   Widget renderButtonBar(BuildContext context) {
     final TodoListBloc _todoListBloc = Provider.of<TodoListBloc>(context);
-    return ButtonTheme.bar(
+    return ButtonBarTheme(
       // make buttons use the appropriate styles for cards
+      data: ButtonBarThemeData(),
       child: ButtonBar(
         children: <Widget>[
           FlatButton(
