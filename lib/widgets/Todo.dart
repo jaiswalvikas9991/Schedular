@@ -54,10 +54,8 @@ class _TodoState extends State<Todo> {
           stream: widget.todoBloc.contentObservable,
           initialData: "Click on Edit",
           builder: (context, AsyncSnapshot<String> snapshot) {
-            this._textController.text = snapshot.data;
             return this._isBeingEdited
                 ? TextField(
-                    key: UniqueKey(),
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
                     decoration: InputDecoration(
@@ -67,7 +65,7 @@ class _TodoState extends State<Todo> {
                     controller: _textController,
                   )
                 : Text(
-                    snapshot.data,
+                    snapshot.data == '' ? 'Click on edit...' : snapshot.data,
                     style: Theme.of(context).textTheme.body2,
                     key: UniqueKey(),
                   );

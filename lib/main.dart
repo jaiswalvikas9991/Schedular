@@ -17,9 +17,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
-  int _selectedTab = 0;
   TabController _tabController;
-  String _centralDate = DateTime.now().toString().substring(0,11).replaceAll(' ', '');
+  String _centralDate =
+      DateTime.now().toString().substring(0, 11).replaceAll(' ', '');
 
   @override
   void initState() {
@@ -27,27 +27,24 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     _tabController = TabController(length: 3, vsync: this);
   }
 
-  bool changeCentralDate(String date){
-    if(this._centralDate != date){
+  bool changeCentralDate(String date) {
+    if (this._centralDate != date) {
       this._centralDate = date;
-      return(true);
+      return (true);
     }
-    return(false);
+    return (false);
   }
 
   Widget _buildTabContent() {
     return TabBarView(
       controller: _tabController,
       physics: const NeverScrollableScrollPhysics(),
-      children: [Home(this.changeCentralDate), Plan(this._centralDate), Statistics()],
+      children: [
+        Home(this.changeCentralDate),
+        Plan(this._centralDate),
+        Statistics()
+      ],
     );
-  }
-
-  void _changeTab(int newIndex) {
-    this.setState(() {
-      this._selectedTab = newIndex;
-      this._tabController.index = newIndex;
-    });
   }
 
   @override
@@ -55,24 +52,25 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     return MaterialApp(
       title: 'Schedular',
       theme: theme(),
-      home: Scaffold(
-        body: BlocProvider<PlanListBloc>(
-          builder: (_, bloc) => bloc ?? PlanListBloc(),
-          onDispose: (_, bloc) => bloc.dispose(),
-          child: BlocProvider<TodoListBloc>(
-            builder: (_, bloc) => bloc ?? TodoListBloc(),
-            child: _buildTabContent(),
+      home: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          body: BlocProvider<PlanListBloc>(
+            builder: (_, bloc) => bloc ?? PlanListBloc(),
             onDispose: (_, bloc) => bloc.dispose(),
+            child: BlocProvider<TodoListBloc>(
+              builder: (_, bloc) => bloc ?? TodoListBloc(),
+              child: _buildTabContent(),
+              onDispose: (_, bloc) => bloc.dispose(),
+            ),
           ),
+          bottomNavigationBar: _buildBottomNavBar(context),
         ),
-        bottomNavigationBar:
-            buildBottomNavBar(context, this._selectedTab, this._changeTab),
       ),
     );
   }
 
-  ClipRRect buildBottomNavBar(
-      BuildContext context, int selectedTab, Function changeTab) {
+  ClipRRect _buildBottomNavBar(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.only(
         topRight: Radius.circular(40),
@@ -81,27 +79,23 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
         bottomRight: Radius.circular(40),
       ),
       child: Card(
-        elevation: 0.0,
-        child: BottomNavigationBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
+        child: TabBar(
+          isScrollable: false,
+          indicatorColor: Colors.transparent,
+          labelColor: Theme.of(context).primaryColor,
+          unselectedLabelColor: Colors.black,
+          tabs: <Widget>[
+            Tab(
               icon: Icon(LineIcons.home),
-              title: Text(''),
             ),
-            BottomNavigationBarItem(
+            Tab(
               icon: Icon(LineIcons.pencil),
-              title: Text(''),
             ),
-            BottomNavigationBarItem(
+            Tab(
               icon: Icon(LineIcons.line_chart),
-              title: Text(''),
             ),
           ],
-          unselectedItemColor: Colors.grey,
-          selectedItemColor: Theme.of(context).primaryColor,
-          currentIndex: selectedTab,
-          showUnselectedLabels: true,
-          onTap: changeTab,
+          controller: _tabController,
         ),
       ),
     );

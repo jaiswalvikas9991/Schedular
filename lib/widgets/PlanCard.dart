@@ -78,10 +78,12 @@ class _PlanCardState extends State<PlanCard> {
               Expanded(
                   child: StreamBuilder<String>(
                       stream: widget.planBloc.descriptionObservable,
-                      initialData: "Describe this awsome task to me......",
+                      initialData: "Describe this awsome task to me...",
                       builder: (context, snapshot) {
                         return Text(
-                          snapshot.data,
+                          snapshot.data == ''
+                              ? "Describe this awsome task to me..."
+                              : snapshot.data,
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.normal),
                         );

@@ -6,15 +6,23 @@ import 'package:schedular/widgets/Calendar.dart';
 import 'package:schedular/widgets/Todo.dart';
 import 'package:schedular/bloc/PlanListBloc.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   final Function changeCentralDate;
   Home(this.changeCentralDate, {Key key}) : super(key: key);
 
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
   List<Widget> renderTodos(List<TodoBloc> allTodo) {
     List<Widget> todoWidgets = [];
     for (int i = 0; i < allTodo.length; i++) todoWidgets.add(Todo(allTodo[i]));
     return todoWidgets;
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   Widget build(BuildContext context) {
     final TodoListBloc _todoListBloc = Provider.of<TodoListBloc>(context);
@@ -30,7 +38,7 @@ class Home extends StatelessWidget {
                 width: MediaQuery.of(context).size.width * 0.95,
                 color: Theme.of(context).primaryColor,
                 onDayPressed: (DateTime dateTime) {
-                  bool isChanged = this.changeCentralDate(
+                  bool isChanged = this.widget.changeCentralDate(
                       dateTime.toString().substring(0, 11).replaceAll(' ', ''));
 
                   if (isChanged) {

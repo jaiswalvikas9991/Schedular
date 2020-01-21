@@ -42,7 +42,7 @@ class PlanBloc {
 
     _subjectIsChecked.sink.add(this._isChecked);
     _subjectRating.sink.add(this._rating);
-    _subjectDescription.sink.add(this._description == '' ? "Describe this awsome task to me......" : this._description);
+    _subjectDescription.sink.add(this._description);
     _subjectFromTime.sink.add(this._fromTime);
     _subjectToTime.sink.add(this._toTime);
     _subjectIsNotification.sink.add(this._isNotification);

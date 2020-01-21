@@ -60,18 +60,17 @@ class _EditState extends State<Edit> {
                         Text("Rating",
                             style: Theme.of(context).textTheme.body2),
                         StreamBuilder<int>(
-                          stream: widget.planBloc.ratingObservable,
-                          initialData: 0,
-                          builder: (context, snapshot) {
-                            return Rating(
-                              count: 5,
-                              onPressed: (int index){
-                                widget.planBloc.updateRating(index);
-                              },
-                              currentIndex: snapshot.data,
-                            );
-                          }
-                        )
+                            stream: widget.planBloc.ratingObservable,
+                            initialData: 0,
+                            builder: (context, snapshot) {
+                              return Rating(
+                                count: 5,
+                                onPressed: (int index) {
+                                  widget.planBloc.updateRating(index);
+                                },
+                                currentIndex: snapshot.data,
+                              );
+                            })
                       ],
                     )
                   ],
@@ -85,7 +84,6 @@ class _EditState extends State<Edit> {
       ),
     );
   }
-
 
   Row _renderEndTime(BuildContext context) {
     return Row(
@@ -175,11 +173,14 @@ class _EditState extends State<Edit> {
                         maxLines: null,
                         decoration: InputDecoration(
                           border: InputBorder.none,
+                          labelText: "Enter Desciption...",
                         ),
                         controller: _textController,
                       )
                     : Text(
-                        snapshot.data == '' ? "Description" : snapshot.data,
+                        snapshot.data == ''
+                            ? "Describe this awsome task to me......"
+                            : snapshot.data,
                         style: TextStyle(
                             fontFamily: "Schyler",
                             fontSize: 35,
