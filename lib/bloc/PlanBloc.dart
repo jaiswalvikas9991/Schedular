@@ -1,3 +1,4 @@
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:schedular/utils/DBProvider.dart';
 
@@ -8,7 +9,7 @@ class PlanBloc {
   int _rating = 0;
   String _description = '';
   DateTime _fromTime = DateTime.now();
-  DateTime _toTime = DateTime.now();
+  DateTime _toTime = DateTime.now().add(new Duration(minutes: 45));
   bool _isNotification = false;
   String _date = DateTime.now().toString().substring(0, 11).replaceAll(' ', '');
   // bool _isAlarm;
@@ -31,12 +32,12 @@ class PlanBloc {
       toTime,
       isNotification,
       date}) {
-    this._isChecked = isChecked ?? false;
-    this._rating = rating ?? 0;
-    this._description = description ?? "";
-    this._fromTime = fromTime ?? DateTime.now();
-    this._toTime = toTime ?? DateTime.now();
-    this._isNotification = isNotification ?? false;
+    this._isChecked = isChecked ?? this._isChecked;
+    this._rating = rating ?? this._rating;
+    this._description = description ?? this._description;
+    this._fromTime = fromTime ?? this._fromTime;
+    this._toTime = toTime ?? this._toTime;
+    this._isNotification = isNotification ?? this._isNotification;
     this._date =
         date ?? DateTime.now().toString().substring(0, 11).replaceAll(' ', '');
 
@@ -101,16 +102,49 @@ class PlanBloc {
     }
   }
 
-  void updateFromTime(DateTime time) {
+  void updateFromTime(DateTime time) async {
     if (this._fromTime != time) {
       this._fromTime = time;
+      // This is to respond to the time changes when the notifications are on
+      if (this._isNotification) {
+        FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+            new FlutterLocalNotificationsPlugin();
+        await _flutterLocalNotificationsPlugin.cancel(this.id.hashCode);
+        this._setNotification();
+      }
       this._subjectFromTime.sink.add(this._fromTime);
       DBProvider.db.updatePlan(this.toMap());
     }
   }
 
-  void updateNotificationState() {
+  void _setNotification() async {
+    FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+        new FlutterLocalNotificationsPlugin();
+
+    var scheduledNotificationDateTime = this._fromTime;
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'channel id', 'channel name', 'channel description');
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    NotificationDetails platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await _flutterLocalNotificationsPlugin.schedule(
+        this.id.hashCode,
+        'Time to work...',
+        this._description,
+        scheduledNotificationDateTime,
+        platformChannelSpecifics);
+  }
+
+  Future<void> updateNotificationState() async {
     this._isNotification = !this._isNotification;
+
+    if (_isNotification) {
+      this._setNotification();
+    } else {
+      FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+          new FlutterLocalNotificationsPlugin();
+      await _flutterLocalNotificationsPlugin.cancel(this.id.hashCode);
+    }
     _subjectIsNotification.sink.add(this._isNotification);
     DBProvider.db.updatePlan(this.toMap());
   }
@@ -136,7 +170,6 @@ class PlanBloc {
         "date": this._date
       };
 
-
-    DateTime getFromTime() => this._fromTime;
-    int getRating() => this._rating;
+  DateTime getFromTime() => this._fromTime;
+  int getRating() => this._rating;
 }

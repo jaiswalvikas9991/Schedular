@@ -94,6 +94,7 @@ class _EditState extends State<Edit> {
         ),
         StreamBuilder<DateTime>(
             stream: widget.planBloc.toTimeObservable,
+            initialData: DateTime.now(),
             builder: (context, snapshot) {
               return GestureDetector(
                 onTap: () {
@@ -131,6 +132,7 @@ class _EditState extends State<Edit> {
         ),
         StreamBuilder<DateTime>(
             stream: widget.planBloc.fromTimeObservable,
+            initialData: new DateTime.now(),
             builder: (context, snapshot) {
               return GestureDetector(
                 onTap: () {
@@ -255,6 +257,7 @@ class _EditState extends State<Edit> {
           padding: const EdgeInsets.all(20),
           child: StreamBuilder<bool>(
               stream: widget.planBloc.isNotificationObservable,
+              initialData: true,
               builder: (context, snapshot) {
                 return GestureDetector(
                   onTap: widget.planBloc.updateNotificationState,

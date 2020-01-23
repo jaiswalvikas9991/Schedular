@@ -1,3 +1,4 @@
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
@@ -24,9 +25,12 @@ class PlanListBloc {
     DBProvider.db.addPlan(newPlan);
   }
 
-  void deletePlan(String id) {
+  void deletePlan(String id) async {
     this._allPlan.removeAt(this._allPlan.indexOf(_getPlanById(id)));
     _subjectAllPlan.sink.add(this._allPlan);
+    FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+        new FlutterLocalNotificationsPlugin();
+    await _flutterLocalNotificationsPlugin.cancel(id.hashCode);
     DBProvider.db.deletePlan(id);
   }
 

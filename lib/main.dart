@@ -8,7 +8,9 @@ import 'package:schedular/utils/Theme.dart';
 import 'package:schedular/utils/Provider.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:schedular/screens/Statistics.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+// Flutter notification is a singleton itself.
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
@@ -20,11 +22,26 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   TabController _tabController;
   String _centralDate =
       DateTime.now().toString().substring(0, 11).replaceAll(' ', '');
+  FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+
+    // initializing the flutter notification plugin
+    _flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    var android = new AndroidInitializationSettings('@mipmap/ic_launcher');
+    var ios = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(android, ios);
+    _flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: _onSelectNotification);
+  }
+
+  Future _onSelectNotification(String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
   }
 
   bool changeCentralDate(String date) {

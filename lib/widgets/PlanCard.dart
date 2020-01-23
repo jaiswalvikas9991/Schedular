@@ -47,7 +47,7 @@ class _PlanCardState extends State<PlanCard> {
               ),
             ],
             image: DecorationImage(
-                image: NetworkImage(widget.imageUrl), fit: BoxFit.cover)),
+                image: AssetImage(widget.imageUrl), fit: BoxFit.cover)),
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Column(

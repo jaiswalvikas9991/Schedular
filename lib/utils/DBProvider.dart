@@ -8,8 +8,10 @@ import 'package:path_provider/path_provider.dart';
 
 class DBProvider {
   DBProvider._();
+  // This is the instance of the class
   static final DBProvider db = DBProvider._();
 
+  // This is the instance to the sql lite database
   static Database _database;
 
   Future<Database> get database async {
@@ -21,8 +23,8 @@ class DBProvider {
   }
 
   initDB() async {
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "test9.db");
+    final Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    String path = join(documentsDirectory.path,"test9.db");
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE todo ("

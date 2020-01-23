@@ -29,9 +29,14 @@ class DateTimeChart extends StatelessWidget {
                 ? charts.TimeSeriesChart(
                     this._getSeries(snapshot.data),
                     animate: true,
+                    defaultRenderer: new charts.BarRendererConfig<DateTime>(),
                     dateTimeFactory: const charts.LocalDateTimeFactory(),
                     primaryMeasureAxis: charts.AxisSpec(showAxisLine: true),
                     secondaryMeasureAxis: charts.AxisSpec(showAxisLine: true),
+                    behaviors: [
+                      new charts.SelectNearest(),
+                      new charts.DomainHighlighter()
+                    ],
                   )
                 : Container());
           }),

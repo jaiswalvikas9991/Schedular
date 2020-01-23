@@ -1,3 +1,6 @@
+// import 'dart:io';
+// import 'package:path_provider/path_provider.dart';
+// import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import 'package:schedular/bloc/PlanListBloc.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
@@ -13,19 +16,39 @@ class Plan extends StatefulWidget {
 
 class _PlanState extends State<Plan> {
   PageController _pageController = new PageController(viewportFraction: 0.8);
-  int _currentPage =
-      0; // This variable keeps track of which page is in the current view
+  // This variable keeps track of which page is in the current view
+  int _currentPage = 0;
+
+  // final imageUrls = <String>[
+  //   "https://images.pexels.com/photos/259698/pexels-photo-259698.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260",
+  //   "https://images.pexels.com/photos/70365/forest-sunbeams-trees-sunlight-70365.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260",
+  //   "https://images.pexels.com/photos/358238/pexels-photo-358238.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+  //   "https://images.pexels.com/photos/807598/pexels-photo-807598.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260",
+  //   "https://images.pexels.com/photos/673857/pexels-photo-673857.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+  //   "https://images.pexels.com/photos/392586/pexels-photo-392586.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+  //   "https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+  //   "https://images.pexels.com/photos/459301/pexels-photo-459301.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  // ];
 
   final imageUrls = <String>[
-    "https://images.pexels.com/photos/259698/pexels-photo-259698.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260",
-    "https://images.pexels.com/photos/70365/forest-sunbeams-trees-sunlight-70365.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260",
-    "https://images.pexels.com/photos/358238/pexels-photo-358238.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    "https://images.pexels.com/photos/807598/pexels-photo-807598.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260",
-    "https://images.pexels.com/photos/673857/pexels-photo-673857.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    "https://images.pexels.com/photos/392586/pexels-photo-392586.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    "https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-    "https://images.pexels.com/photos/459301/pexels-photo-459301.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+    "images/0.jpeg",
+    "images/1.jpeg",
+    "images/2.jpeg",
+    "images/3.jpeg",
+    "images/4.jpeg",
+    "images/5.jpeg",
+    "images/6.jpeg",
+    "images/7.jpeg",
   ];
+
+  // void getImageFromDir() async {
+  //   final Directory documentsDirectory =
+  //       await getApplicationDocumentsDirectory();
+  //   String path = join(documentsDirectory.path, "schedular", "images");
+  //   final myDir = new Directory(path);
+  //   List<FileSystemEntity> _images;
+  //   _images = myDir.listSync(recursive: true, followLinks: false);
+  // }
 
   @override
   void initState() {
@@ -41,8 +64,11 @@ class _PlanState extends State<Plan> {
   }
 
   Widget _renderPage(bool active, PlanBloc planData, int currentIndex) {
-    return PlanCard(planData, active,
-        this.imageUrls[currentIndex % this.imageUrls.length], widget.date);
+    return PlanCard(
+        planData,
+        active,
+        this.imageUrls[planData.id.hashCode % this.imageUrls.length],
+        widget.date);
   }
 
   @override
