@@ -24,6 +24,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
   @override
   bool get wantKeepAlive => true;
 
+@override
   Widget build(BuildContext context) {
     final TodoListBloc _todoListBloc = Provider.of<TodoListBloc>(context);
     final PlanListBloc _planListBloc = Provider.of<PlanListBloc>(context);

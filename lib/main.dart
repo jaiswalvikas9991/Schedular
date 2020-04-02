@@ -3,6 +3,7 @@ import 'package:schedular/bloc/PlanListBloc.dart';
 import 'package:schedular/bloc/TodoListBloc.dart';
 import 'package:schedular/screens/Home.dart';
 import 'package:schedular/screens/Plan.dart';
+import 'package:schedular/screens/Setting.dart';
 import 'package:schedular/utils/DBProvider.dart';
 import 'package:schedular/utils/Theme.dart';
 import 'package:schedular/utils/Provider.dart';
@@ -27,7 +28,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
 
     // initializing the flutter notification plugin
     _flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
@@ -59,7 +60,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       children: [
         Home(this.changeCentralDate),
         Plan(this._centralDate),
-        Statistics()
+        Statistics(),
+        Setting()
       ],
     );
   }
@@ -70,7 +72,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       title: 'Schedular',
       theme: theme(),
       home: DefaultTabController(
-        length: 3,
+        length: 4,
         child: Scaffold(
           body: BlocProvider<PlanListBloc>(
             builder: (_, bloc) => bloc ?? PlanListBloc(),
@@ -110,6 +112,9 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
             ),
             Tab(
               icon: Icon(LineIcons.line_chart),
+            ),
+            Tab(
+              icon: Icon(LineIcons.cog),
             ),
           ],
           controller: _tabController,

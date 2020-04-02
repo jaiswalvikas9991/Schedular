@@ -219,7 +219,7 @@ class _EditState extends State<Edit> {
           height: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             image: DecorationImage(
-                fit: BoxFit.cover, image: NetworkImage(widget.imageUrl)),
+                fit: BoxFit.cover, image: AssetImage(widget.imageUrl)),
             borderRadius: BorderRadius.only(
                 bottomLeft:
                     Radius.circular(MediaQuery.of(context).size.width * 0.5)),
