@@ -1,10 +1,12 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
-import 'package:schedular/bloc/PlanListBloc.dart';
-import 'package:schedular/utils/Provider.dart';
 
 class DateTimeChart extends StatelessWidget {
+  final List<PlanBloc> data;
+
+  DateTimeChart({@required this.data});
+
   List<charts.Series<PlanBloc, DateTime>> _getSeries(
       List<PlanBloc> planListBloc) {
     //* Sorting the planbloc based on the start time
@@ -28,34 +30,18 @@ class DateTimeChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PlanListBloc _planListBloc = Provider.of<PlanListBloc>(context);
     return Scaffold(
-      body: StreamBuilder<List<PlanBloc>>(
-          stream: _planListBloc.allPlanObservable,
-          builder: (context, AsyncSnapshot<List<PlanBloc>> snapshot) {
-            return (snapshot.hasData
-                ? charts.TimeSeriesChart(
-                    this._getSeries(snapshot.data),
-                    animate: true,
-                    defaultRenderer: new charts.LineRendererConfig<DateTime>(
-                        includePoints: true),
-                    dateTimeFactory: const charts.LocalDateTimeFactory(),
-                    primaryMeasureAxis: charts.AxisSpec(showAxisLine: true),
-                    //secondaryMeasureAxis: charts.AxisSpec(showAxisLine: true),
-                    // domainAxis: charts.DateTimeAxisSpec(
-                    //     showAxisLine: true,
-                    //     tickFormatterSpec: charts.AutoDateTimeTickFormatterSpec(
-                    //       hour: charts.TimeFormatterSpec(),
-                    //       //minute: charts.TimeFormatterSpec(format: 'm'),
-                    //       //`day : charts.TimeFormatterSpec(format: "")
-                    //     )),
-                    behaviors: [
-                      new charts.SlidingViewport(),
-                      new charts.PanAndZoomBehavior(),
-                    ],
-                  )
-                : Container());
-          }),
-    );
+        body: charts.TimeSeriesChart(
+      this._getSeries(this.data),
+      animate: true,
+      defaultRenderer:
+          new charts.LineRendererConfig<DateTime>(includePoints: true),
+      dateTimeFactory: const charts.LocalDateTimeFactory(),
+      primaryMeasureAxis: charts.AxisSpec(showAxisLine: true),
+      behaviors: [
+        new charts.SlidingViewport(),
+        new charts.PanAndZoomBehavior(),
+      ],
+    ));
   }
 }

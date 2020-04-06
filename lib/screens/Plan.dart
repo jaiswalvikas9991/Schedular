@@ -1,9 +1,7 @@
-// import 'dart:io';
-// import 'package:path_provider/path_provider.dart';
-// import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import 'package:schedular/bloc/PlanListBloc.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
+import 'package:schedular/widgets/PlaceHolder.dart';
 import 'package:schedular/widgets/PlanCard.dart';
 import 'package:schedular/utils/Provider.dart';
 
@@ -16,19 +14,8 @@ class Plan extends StatefulWidget {
 
 class _PlanState extends State<Plan> {
   PageController _pageController = new PageController(viewportFraction: 0.8);
-  // This variable keeps track of which page is in the current view
+  //* This variable keeps track of which page is in the current view
   int _currentPage = 0;
-
-  // final imageUrls = <String>[
-  //   "https://images.pexels.com/photos/259698/pexels-photo-259698.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260",
-  //   "https://images.pexels.com/photos/70365/forest-sunbeams-trees-sunlight-70365.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260",
-  //   "https://images.pexels.com/photos/358238/pexels-photo-358238.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-  //   "https://images.pexels.com/photos/807598/pexels-photo-807598.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260",
-  //   "https://images.pexels.com/photos/673857/pexels-photo-673857.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-  //   "https://images.pexels.com/photos/392586/pexels-photo-392586.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-  //   "https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-  //   "https://images.pexels.com/photos/459301/pexels-photo-459301.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
-  // ];
 
   final imageUrls = <String>[
     "images/0.jpeg",
@@ -40,15 +27,6 @@ class _PlanState extends State<Plan> {
     "images/6.jpeg",
     "images/7.jpeg",
   ];
-
-  // void getImageFromDir() async {
-  //   final Directory documentsDirectory =
-  //       await getApplicationDocumentsDirectory();
-  //   String path = join(documentsDirectory.path, "schedular", "images");
-  //   final myDir = new Directory(path);
-  //   List<FileSystemEntity> _images;
-  //   _images = myDir.listSync(recursive: true, followLinks: false);
-  // }
 
   @override
   void initState() {
@@ -69,6 +47,14 @@ class _PlanState extends State<Plan> {
         active,
         this.imageUrls[planData.id.hashCode % this.imageUrls.length],
         widget.date);
+  }
+
+  String _greeting() {
+    var hour = DateTime.now().hour;
+    if (hour > 3 && hour < 12) return 'Good Morning';
+    if (hour > 21 && hour < 3) return 'Good Night';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
   }
 
   @override
@@ -95,7 +81,7 @@ class _PlanState extends State<Plan> {
               )
             ],
           ),
-          Text("Good evening",
+          Text(this._greeting(),
               style: TextStyle(
                   color: Color(0xff48c6ef),
                   fontFamily: 'Schyler',
@@ -111,7 +97,7 @@ class _PlanState extends State<Plan> {
             child: StreamBuilder<List<PlanBloc>>(
                 stream: _planListBloc.allPlanObservable,
                 builder: (context, AsyncSnapshot<List<PlanBloc>> snapshot) {
-                  return snapshot.hasData
+                  return snapshot.hasData && snapshot.data.length != 0
                       ? PageView.builder(
                           controller: this._pageController,
                           scrollDirection: Axis.horizontal,
@@ -122,7 +108,8 @@ class _PlanState extends State<Plan> {
                                 snapshot.data[currentIndex], currentIndex);
                           },
                         )
-                      : Container();
+                      : PlaceHolder(
+                          data: "Click on the + icon to \n add a plan");
                 }),
           ),
         ],

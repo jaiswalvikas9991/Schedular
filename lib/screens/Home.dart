@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schedular/bloc/TodoBloc.dart';
 import 'package:schedular/bloc/TodoListBloc.dart';
+import 'package:schedular/utils/Animate.dart';
 import 'package:schedular/utils/Provider.dart';
 import 'package:schedular/widgets/Calendar.dart';
 import 'package:schedular/widgets/Todo.dart';
@@ -15,16 +16,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
-  List<Widget> renderTodos(List<TodoBloc> allTodo) {
-    List<Widget> todoWidgets = [];
-    for (int i = 0; i < allTodo.length; i++) todoWidgets.add(Todo(allTodo[i]));
-    return todoWidgets;
-  }
-
   @override
   bool get wantKeepAlive => true;
 
-@override
+  @override
   Widget build(BuildContext context) {
     final TodoListBloc _todoListBloc = Provider.of<TodoListBloc>(context);
     final PlanListBloc _planListBloc = Provider.of<PlanListBloc>(context);
@@ -60,9 +55,12 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                 builder: (context, AsyncSnapshot<List<TodoBloc>> snapshot) {
                   return snapshot.hasData
                       ? Expanded(
-                          child: ListView(
-                            children: this.renderTodos(snapshot.data),
-                          ),
+                          child: ListView.builder(
+                              itemCount: snapshot.data.length,
+                              itemBuilder: (BuildContext context, int index) =>
+                                  Animator(
+                                      duration: 200,
+                                      child: Todo(snapshot.data[index]))),
                         )
                       : Container();
                 })

@@ -8,6 +8,8 @@ class AddBucket extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20.0))),
       title: Text("Bucket Name",
           style: Theme.of(context)
               .textTheme
@@ -18,12 +20,20 @@ class AddBucket extends StatelessWidget {
       ),
       actions: <Widget>[
         FlatButton(
-            child: Text('Cancel', style: Theme.of(context).textTheme.body2),
+            child: Text('Cancel',
+                style: Theme.of(context)
+                    .textTheme
+                    .body2
+                    .copyWith(color: const Color(0xff48c6ef))),
             onPressed: () {
               Navigator.of(context).pop();
             }),
         FlatButton(
-            child: Text('Save', style: Theme.of(context).textTheme.body2),
+            child: Text('Save',
+                style: Theme.of(context)
+                    .textTheme
+                    .body2
+                    .copyWith(color: const Color(0xff48c6ef))),
             onPressed: () {
               Navigator.pop(context, this._controller.text);
             })

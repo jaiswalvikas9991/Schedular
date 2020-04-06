@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-Type _getType<B>() => B;
+//Type _getType<B>() => B;
 
 class Provider<B> extends InheritedWidget {
   final B bloc;
@@ -17,8 +17,8 @@ class Provider<B> extends InheritedWidget {
   }
 
   static B of<B>(BuildContext context) {
-    final type = _getType<Provider<B>>();
-    final Provider<B> provider = context.inheritFromWidgetOfExactType(type);
+    //final type = _getType<Provider<B>>();
+    final Provider<B> provider = context.dependOnInheritedWidgetOfExactType();
 
     return provider.bloc;
   }
