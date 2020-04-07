@@ -25,11 +25,16 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       DateTime.now().toString().substring(0, 11).replaceAll(' ', '');
   FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
 
+  PlanListBloc _planListBloc;
+  TodoListBloc _todoListBloc;
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
-
+    //* Initializing the block
+    this._todoListBloc = new TodoListBloc();
+    this._planListBloc = new PlanListBloc();
     // initializing the flutter notification plugin
     _flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
     var android = new AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -75,10 +80,10 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
         length: 4,
         child: Scaffold(
           body: BlocProvider<PlanListBloc>(
-            builder: (_, bloc) => bloc ?? PlanListBloc(),
+            builder: (_, bloc) => bloc ?? this._planListBloc,
             onDispose: (_, bloc) => bloc.dispose(),
             child: BlocProvider<TodoListBloc>(
-              builder: (_, bloc) => bloc ?? TodoListBloc(),
+              builder: (_, bloc) => bloc ?? this._todoListBloc,
               child: _buildTabContent(),
               onDispose: (_, bloc) => bloc.dispose(),
             ),

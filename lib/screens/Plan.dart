@@ -51,10 +51,11 @@ class _PlanState extends State<Plan> {
 
   String _greeting() {
     var hour = DateTime.now().hour;
-    if (hour > 3 && hour < 12) return 'Good Morning';
-    if (hour > 21 && hour < 3) return 'Good Night';
-    if (hour < 17) return 'Good Afternoon';
-    return 'Good Evening';
+    debugPrint(hour.toString());
+    if (hour >= 3 && hour < 12) return 'Good Morning';
+    if (hour >= 12 && hour < 17) return 'Good Afternoon';
+    if (hour >= 17 && hour < 21) return 'Good Evening';
+    return 'Good Night';
   }
 
   @override

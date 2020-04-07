@@ -4,6 +4,7 @@ import 'package:schedular/bloc/PlanBloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:schedular/widgets/Rating.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Edit extends StatefulWidget {
   final String imageUrl;
@@ -18,10 +19,29 @@ class Edit extends StatefulWidget {
 class _EditState extends State<Edit> {
   final TextEditingController _textController = new TextEditingController();
   bool _isBeingEdited = false;
+  List<String> _buckets = new List<String>();
+
+  @override
+  void initState() {
+    super.initState();
+    final String bucketKey = "keys";
+    SharedPreferences.getInstance().then((SharedPreferences prefs) {
+      this._buckets = prefs.getStringList(bucketKey) ?? [];
+    });
+  }
 
   String _parseString(String date) {
     List<String> splitString = date.split('-');
     return ("${splitString[1]}/${splitString[2]}/${splitString[0]}");
+  }
+
+  List<PopupMenuItem<String>> _getPopupMenuItems() {
+    List<PopupMenuItem<String>> list = new List<PopupMenuItem<String>>();
+    for (int i = 0; i < this._buckets.length; i++)
+      list.add(PopupMenuItem(
+          value: this._buckets[i],
+          child: ListTile(title: Text(this._buckets[i]))));
+    return (list);
   }
 
   @override
@@ -37,6 +57,32 @@ class _EditState extends State<Edit> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        StreamBuilder<String>(
+                            stream: widget.planBloc.bucketObservable,
+                            initialData: "Select a Task Type",
+                            builder: (BuildContext context,
+                                AsyncSnapshot<String> snapshot) {
+                              return Text(
+                                snapshot.data.isEmpty
+                                    ? "Select a Task Type"
+                                    : snapshot.data,
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor),
+                              );
+                            }),
+                        PopupMenuButton(
+                          icon: Icon(LineIcons.list,
+                              color: Theme.of(context).primaryColor),
+                          itemBuilder: (BuildContext context) =>
+                              this._getPopupMenuItems(),
+                          onSelected: (String bucket) {
+                            widget.planBloc.updateBucketState(bucket);
+                          },
+                        )
+                      ],
+                    ),
                     Text(
                       DateFormat.yMMMEd().format(DateFormat.yMd('en_US')
                           .parse(this._parseString(widget.date))),
@@ -63,12 +109,23 @@ class _EditState extends State<Edit> {
                             stream: widget.planBloc.ratingObservable,
                             initialData: 0,
                             builder: (context, snapshot) {
-                              return Rating(
-                                count: 5,
-                                onPressed: (int index) {
-                                  widget.planBloc.updateRating(index);
-                                },
-                                currentIndex: snapshot.data,
+                              return Row(
+                                children: <Widget>[
+                                  Rating(
+                                    count: 5,
+                                    onPressed: (int index) {
+                                      widget.planBloc.updateRating(index + 1);
+                                    },
+                                    currentIndex: snapshot.data,
+                                  ),
+                                  IconButton(
+                                      icon: Icon(LineIcons.close,
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                      onPressed: () {
+                                        widget.planBloc.updateRating(0);
+                                      })
+                                ],
                               );
                             })
                       ],

@@ -6,6 +6,7 @@ import 'package:schedular/bloc/TodoBloc.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
+//* This is a singleton class
 class DBProvider {
   DBProvider._();
   // This is the instance of the class
@@ -23,8 +24,9 @@ class DBProvider {
   }
 
   initDB() async {
-    final Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path,"test9.db");
+    final Directory documentsDirectory =
+        await getApplicationDocumentsDirectory();
+    String path = join(documentsDirectory.path, "data.db");
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE todo ("
@@ -40,7 +42,8 @@ class DBProvider {
           "fromTime TEXT,"
           "toTime TEXT,"
           "isNotification BIT,"
-          "isChecked BIT"
+          "isChecked BIT,"
+          "bucket TEXT"
           ")");
     });
   }
@@ -113,8 +116,18 @@ class DBProvider {
     db.delete("plan", where: "id = ?", whereArgs: [id]);
   }
 
+  Future<String> copyDb() async {
+    final Directory databasePath = await getApplicationDocumentsDirectory();
+    final sourcePath = join(databasePath.path, 'data.db');
+    final db = await database;
+    db.close();
+    _database = null;
+    return (sourcePath);
+  }
+
   void dispose() async {
     final db = await database;
     db.close();
+    _database = null;
   }
 }

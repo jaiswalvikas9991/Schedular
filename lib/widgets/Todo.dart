@@ -13,8 +13,12 @@ class Todo extends StatefulWidget {
 }
 
 class _TodoState extends State<Todo> {
-  final TextEditingController _textController = new TextEditingController();
+  TextEditingController _textController;
   bool _isBeingEdited = false;
+
+  _TodoState() {
+    this._textController = new TextEditingController();
+  }
 
   Widget renderButtonBar(BuildContext context) {
     final TodoListBloc _todoListBloc = Provider.of<TodoListBloc>(context);
@@ -54,7 +58,8 @@ class _TodoState extends State<Todo> {
           stream: widget.todoBloc.contentObservable,
           initialData: "Click on Edit",
           builder: (context, AsyncSnapshot<String> snapshot) {
-            return this._isBeingEdited
+            this._textController.text = snapshot.data;
+            return (this._isBeingEdited
                 ? TextField(
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
@@ -67,8 +72,7 @@ class _TodoState extends State<Todo> {
                 : Text(
                     snapshot.data == '' ? 'Click on edit...' : snapshot.data,
                     style: Theme.of(context).textTheme.body2,
-                    key: UniqueKey(),
-                  );
+                  ));
           }),
     );
   }
@@ -95,11 +99,11 @@ class _TodoState extends State<Todo> {
         children: <Widget>[
           Row(
             children: <Widget>[
-              renderCheckBox(),
-              renderTextField(),
+              this.renderCheckBox(),
+              this.renderTextField(),
             ],
           ),
-          renderButtonBar(context),
+          this.renderButtonBar(context),
         ],
       ),
     );
@@ -108,8 +112,7 @@ class _TodoState extends State<Todo> {
   @override
   void dispose() {
     _textController.clear();
-    _textController.dispose();
-    widget.todoBloc.dispose();
+    //_textController.dispose();
     super.dispose();
   }
 }

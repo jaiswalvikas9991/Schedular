@@ -12,16 +12,17 @@ class PlanBloc {
   DateTime _toTime = DateTime.now().add(new Duration(minutes: 45));
   bool _isNotification = false;
   String _date = DateTime.now().toString().substring(0, 11).replaceAll(' ', '');
+  String _bucket = "";
   // bool _isAlarm;
 
   // Behaviour Subject
-
   BehaviorSubject<bool> _subjectIsChecked = new BehaviorSubject<bool>();
   BehaviorSubject<int> _subjectRating = new BehaviorSubject<int>();
   BehaviorSubject<String> _subjectDescription = new BehaviorSubject<String>();
   BehaviorSubject<DateTime> _subjectFromTime = new BehaviorSubject<DateTime>();
   BehaviorSubject<DateTime> _subjectToTime = BehaviorSubject<DateTime>();
   BehaviorSubject<bool> _subjectIsNotification = BehaviorSubject<bool>();
+  BehaviorSubject<String> _subjectBucket = BehaviorSubject<String>();
   // BehaviorSubject<bool> _subjectIsAlarm = new   BehaviorSubject<bool>();
 
   PlanBloc(this.id,
@@ -31,7 +32,8 @@ class PlanBloc {
       fromTime,
       toTime,
       isNotification,
-      date}) {
+      date,
+      bucket}) {
     this._isChecked = isChecked ?? this._isChecked;
     this._rating = rating ?? this._rating;
     this._description = description ?? this._description;
@@ -40,6 +42,7 @@ class PlanBloc {
     this._isNotification = isNotification ?? this._isNotification;
     this._date =
         date ?? DateTime.now().toString().substring(0, 11).replaceAll(' ', '');
+    this._bucket = bucket ?? "";
 
     _subjectIsChecked.sink.add(this._isChecked);
     _subjectRating.sink.add(this._rating);
@@ -47,9 +50,10 @@ class PlanBloc {
     _subjectFromTime.sink.add(this._fromTime);
     _subjectToTime.sink.add(this._toTime);
     _subjectIsNotification.sink.add(this._isNotification);
+    _subjectBucket.sink.add(this._bucket);
   }
 
-  // This constructor is used when the data is fetched from the database
+  //* This constructor is used when the data is fetched from the database
   factory PlanBloc.fromMap(Map<String, dynamic> planBloc) {
     return PlanBloc(planBloc["id"],
         isChecked: planBloc["isChecked"] == 1,
@@ -58,7 +62,8 @@ class PlanBloc {
         fromTime: DateTime.parse(planBloc["fromTime"]),
         toTime: DateTime.parse(planBloc["toTime"]),
         isNotification: planBloc["isNotification"] == 1,
-        date: planBloc["date"]);
+        date: planBloc["date"],
+        bucket: planBloc["bucket"]);
   }
 
   // Stream
@@ -70,7 +75,15 @@ class PlanBloc {
   Observable<DateTime> get toTimeObservable => this._subjectToTime.stream;
   Observable<bool> get isNotificationObservable =>
       this._subjectIsNotification.stream;
+  Observable<String> get bucketObservable => this._subjectBucket.stream;
   // Observable<bool> get isAlarmObservable => this._subjectIsAlarm.stream;
+
+  void updateBucketState(String bucket) {
+    if (this._bucket == bucket) return;
+    this._bucket = bucket;
+    _subjectBucket.sink.add(this._bucket);
+    DBProvider.db.updatePlan(this.toMap());
+  }
 
   void updateCheckedState() {
     this._isChecked = !this._isChecked;
@@ -157,6 +170,7 @@ class PlanBloc {
     _subjectToTime.close();
     _subjectIsNotification.close();
     // _subjectIsAlarm.close();
+    _subjectBucket.close();
   }
 
   Map<String, dynamic> toMap() => {
@@ -167,9 +181,11 @@ class PlanBloc {
         "toTime": this._toTime.toString(),
         "isChecked": this._isChecked ? 1 : 0,
         "isNotification": this._isNotification ? 1 : 0,
-        "date": this._date
+        "date": this._date,
+        "bucket": this._bucket
       };
 
   DateTime getFromTime() => this._fromTime;
   int getRating() => this._rating;
+  String getBucket() => this._bucket.isEmpty ? "_" : this._bucket;
 }

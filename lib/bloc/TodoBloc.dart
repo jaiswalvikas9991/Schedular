@@ -57,4 +57,6 @@ class TodoBloc {
     "content" : this._content,
     "isChecked" : this._isChecked ? 1 : 0, //Converts bool to a bit because sqllite does not support bool directly
   };
+
+  String getContent() => this._content;
 }

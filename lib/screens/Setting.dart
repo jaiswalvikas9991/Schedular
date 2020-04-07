@@ -1,9 +1,14 @@
+import 'dart:io';
+import 'package:intl/intl.dart';
+import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:schedular/widgets/AddBucket.dart';
 import 'package:schedular/widgets/BucketCard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:schedular/utils/Animate.dart';
+import 'package:schedular/utils/DBProvider.dart';
 
 class Setting extends StatefulWidget {
   Setting({Key key}) : super(key: key);
@@ -51,7 +56,7 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
     await prefs.setStringList(bucketKey, buckets);
   }
 
-  Future<void> _showDialog() async {
+  Future<void> _showDialog(BuildContext context) async {
     String text = await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -65,14 +70,46 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
     });
   }
 
+  void _copyDb() async {
+    //* Source file
+    String sourcePath = await DBProvider.db.copyDb();
+    //debugPrint("Data copied form : " + sourcePath);
+    File sourceFile = File(sourcePath);
+    List content = await sourceFile.readAsBytes();
+
+    //* target file
+    final targetDir = await getExternalStorageDirectory();
+    final targetPath = join(targetDir.path,
+        DateFormat("dd-MM-yyyy").format(DateTime.now()) + '.db');
+    //debugPrint("Data Copied to : " + targetPath);
+    File targetFile = File(targetPath);
+    await targetFile.writeAsBytes(content, flush: true);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
           child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(15.0),
         child: Column(
           children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  "Upload Data",
+                  style: Theme.of(context).textTheme.headline.copyWith(
+                      color: Color(0xff48c6ef), fontWeight: FontWeight.bold),
+                  key: UniqueKey(),
+                ),
+                IconButton(
+                  onPressed: this._copyDb,
+                  icon: Icon(LineIcons.upload),
+                  color: Colors.black,
+                )
+              ],
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -83,7 +120,9 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
                   key: UniqueKey(),
                 ),
                 IconButton(
-                  onPressed: this._showDialog,
+                  onPressed: () {
+                    this._showDialog(context);
+                  },
                   icon: Icon(LineIcons.plus),
                   color: Colors.black,
                 )
@@ -99,7 +138,7 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
                             delete: this._deleteBucket,
                             index: index),
                       )),
-            )
+            ),
           ],
         ),
       )),

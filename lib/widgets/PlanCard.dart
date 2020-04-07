@@ -58,7 +58,8 @@ class _PlanCardState extends State<PlanCard> {
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
                   Text(DateFormat.yMMMEd().format(DateFormat.yMd('en_US')
-                      .parse(this._parseString(widget.date)))),
+                      .parse(this._parseString(widget.date))) + "\n" + "Task type : " + widget.planBloc.getBucket()
+                      ),
                   IconButton(
                     icon: Icon(LineIcons.pencil),
                     onPressed: () {

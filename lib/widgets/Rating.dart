@@ -27,8 +27,12 @@ class Rating extends StatelessWidget {
     for (int i = 0; i < count; i++) {
       returnList.add(IconButton(
         icon: Icon(
-          currentIndex >= i ? this.activeIcon ?? LineIcons.star : this.inActiveIcon ?? LineIcons.star_o,
-          color: currentIndex >= i ? this.activeColor ?? Theme.of(context).primaryColor : this.inActiveColor ?? Colors.black,
+          currentIndex > i
+              ? this.activeIcon ?? LineIcons.star
+              : this.inActiveIcon ?? LineIcons.star_o,
+          color: currentIndex > i
+              ? this.activeColor ?? Theme.of(context).primaryColor
+              : this.inActiveColor ?? Colors.black,
         ),
         onPressed: () {
           this.onPressed(i);
