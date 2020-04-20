@@ -268,7 +268,7 @@ class _EditState extends State<Edit> {
     );
   }
 
-  Hero _renderImage(BuildContext context) {
+  Widget _renderImage(BuildContext context) {
     return Hero(
       tag: widget.planBloc.id,
       child: Container(

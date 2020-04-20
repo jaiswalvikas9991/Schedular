@@ -28,9 +28,9 @@ class PlanListBloc {
   void deletePlan(String id) async {
     this._allPlan.removeAt(this._allPlan.indexOf(_getPlanById(id)));
     _subjectAllPlan.sink.add(this._allPlan);
-    FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-        new FlutterLocalNotificationsPlugin();
-    await _flutterLocalNotificationsPlugin.cancel(id.hashCode);
+    // FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+    //     new FlutterLocalNotificationsPlugin();
+    // await _flutterLocalNotificationsPlugin.cancel(id.hashCode);
     DBProvider.db.deletePlan(id);
   }
 

@@ -29,89 +29,96 @@ class _PlanCardState extends State<PlanCard> {
     final PlanListBloc _planListBloc = Provider.of<PlanListBloc>(context);
     return Hero(
       tag: widget.planBloc.id,
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 600),
-        curve: Curves.easeOut,
-        margin: EdgeInsets.only(
-            top: widget.active
-                ? MediaQuery.of(context).size.height * 0.05
-                : MediaQuery.of(context).size.height * 0.15,
-            bottom: MediaQuery.of(context).size.height * 0.08,
-            right: MediaQuery.of(context).size.height * 0.02),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(40),
-            boxShadow: [
-              BoxShadow(
-                color: widget.active ? Colors.black : Colors.transparent,
-                blurRadius: widget.active ? 30 : 0,
-              ),
-            ],
-            image: DecorationImage(
-                image: AssetImage(widget.imageUrl), fit: BoxFit.cover)),
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  Text(DateFormat.yMMMEd().format(DateFormat.yMd('en_US')
-                      .parse(this._parseString(widget.date))) + "\n" + "Task type : " + widget.planBloc.getBucket()
-                      ),
-                  IconButton(
-                    icon: Icon(LineIcons.pencil),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                              transitionDuration: Duration(milliseconds: 800),
-                              pageBuilder: (_, __, ___) => Edit(widget.imageUrl,
-                                  widget.planBloc, widget.date)));
-                    },
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Expanded(
-                  child: StreamBuilder<String>(
-                      stream: widget.planBloc.descriptionObservable,
-                      initialData: "Describe this awsome task to me...",
-                      builder: (context, snapshot) {
-                        return Text(
-                          snapshot.data == ''
-                              ? "Describe this awsome task to me..."
-                              : snapshot.data,
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.normal),
-                        );
-                      })),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  StreamBuilder<bool>(
-                      stream: widget.planBloc.isNotificationObservable,
-                      initialData: false,
-                      builder: (context, snapshot) {
-                        return IconButton(
-                          icon: Icon(
-                              snapshot.data ? Icons.alarm_on : Icons.alarm_off),
-                          onPressed: widget.planBloc.updateNotificationState,
-                        );
-                      }),
-                  IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      _planListBloc.deletePlan(widget.planBloc.id);
-                    },
-                  ),
-                ],
-              )
-            ],
+      child: Material(
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+          margin: EdgeInsets.only(
+              top: widget.active
+                  ? MediaQuery.of(context).size.height * 0.05
+                  : MediaQuery.of(context).size.height * 0.15,
+              bottom: MediaQuery.of(context).size.height * 0.08,
+              right: MediaQuery.of(context).size.height * 0.02),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(40),
+              boxShadow: [
+                BoxShadow(
+                  color: widget.active ? Theme.of(context).primaryColor : Colors.transparent,
+                  blurRadius: widget.active ? 0 : 0,
+                ),
+              ],
+              image: DecorationImage(
+                  image: AssetImage(widget.imageUrl), fit: BoxFit.cover)),
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    Text(DateFormat.yMMMEd().format(DateFormat.yMd('en_US')
+                            .parse(this._parseString(widget.date))) +
+                        "\n" +
+                        "Task type : " +
+                        widget.planBloc.getBucket()),
+                    IconButton(
+                      icon: Icon(LineIcons.pencil),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                                transitionDuration: Duration(milliseconds: 500),
+                                pageBuilder: (_, __, ___) => Edit(
+                                    widget.imageUrl,
+                                    widget.planBloc,
+                                    widget.date)));
+                      },
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                Expanded(
+                    child: StreamBuilder<String>(
+                        stream: widget.planBloc.descriptionObservable,
+                        initialData: "Describe this awsome task to me...",
+                        builder: (context, snapshot) {
+                          return Text(
+                            snapshot.data == ''
+                                ? "Describe this awsome task to me..."
+                                : snapshot.data,
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.normal),
+                          );
+                        })),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    StreamBuilder<bool>(
+                        stream: widget.planBloc.isNotificationObservable,
+                        initialData: false,
+                        builder: (context, snapshot) {
+                          return IconButton(
+                            icon: Icon(snapshot.data
+                                ? Icons.alarm_on
+                                : Icons.alarm_off),
+                            onPressed: widget.planBloc.updateNotificationState,
+                          );
+                        }),
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        _planListBloc.deletePlan(widget.planBloc.id);
+                      },
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),

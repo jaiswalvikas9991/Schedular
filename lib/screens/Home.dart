@@ -4,6 +4,7 @@ import 'package:schedular/bloc/TodoListBloc.dart';
 import 'package:schedular/utils/Animate.dart';
 import 'package:schedular/utils/Provider.dart';
 import 'package:schedular/widgets/Calendar.dart';
+import 'package:schedular/widgets/PlaceHolder.dart';
 import 'package:schedular/widgets/Todo.dart';
 import 'package:schedular/bloc/PlanListBloc.dart';
 
@@ -21,6 +22,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final TodoListBloc _todoListBloc = Provider.of<TodoListBloc>(context);
     final PlanListBloc _planListBloc = Provider.of<PlanListBloc>(context);
     return Scaffold(
@@ -53,16 +55,18 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
             StreamBuilder<List<TodoBloc>>(
                 stream: _todoListBloc.allTodoObservable,
                 builder: (context, AsyncSnapshot<List<TodoBloc>> snapshot) {
-                  return snapshot.hasData
-                      ? Expanded(
-                          child: ListView.builder(
-                              itemCount: snapshot.data.length,
-                              itemBuilder: (BuildContext context, int index) =>
-                                  Animator(
-                                      duration: 200,
-                                      child: Todo(snapshot.data[index]))),
-                        )
-                      : Container();
+                  return snapshot.hasData && snapshot.data.length != 0
+                      ? ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: snapshot.data.length,
+                          itemBuilder: (BuildContext context, int index) =>
+                              Animator(
+                                  duration: 200,
+                                  child: Todo(snapshot.data[index])))
+                      : Expanded(
+                          child: Center(
+                              child: PlaceHolder(
+                                  data: "This is the Notes \n Taking Area")));
                 })
           ],
         ),

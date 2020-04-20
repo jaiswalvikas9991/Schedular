@@ -120,17 +120,17 @@ class PlanBloc {
       this._fromTime = time;
       // This is to respond to the time changes when the notifications are on
       if (this._isNotification) {
-        FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-            new FlutterLocalNotificationsPlugin();
-        await _flutterLocalNotificationsPlugin.cancel(this.id.hashCode);
-        this._setNotification();
+        // FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+        //     new FlutterLocalNotificationsPlugin();
+        // await _flutterLocalNotificationsPlugin.cancel(this.id.hashCode);
+        // this._setNotification();
       }
       this._subjectFromTime.sink.add(this._fromTime);
       DBProvider.db.updatePlan(this.toMap());
     }
   }
 
-  void _setNotification() async {
+  Future<void> _setNotification() async {
     FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
         new FlutterLocalNotificationsPlugin();
 
@@ -142,7 +142,7 @@ class PlanBloc {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await _flutterLocalNotificationsPlugin.schedule(
         this.id.hashCode,
-        'Time to work...',
+        this._bucket,
         this._description,
         scheduledNotificationDateTime,
         platformChannelSpecifics);
@@ -151,13 +151,13 @@ class PlanBloc {
   Future<void> updateNotificationState() async {
     this._isNotification = !this._isNotification;
 
-    if (_isNotification) {
-      this._setNotification();
-    } else {
-      FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-          new FlutterLocalNotificationsPlugin();
-      await _flutterLocalNotificationsPlugin.cancel(this.id.hashCode);
-    }
+    // if (_isNotification) {
+    //   await this._setNotification();
+    // } else {
+    //   FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+    //       new FlutterLocalNotificationsPlugin();
+    //   await _flutterLocalNotificationsPlugin.cancel(this.id.hashCode);
+    // }
     _subjectIsNotification.sink.add(this._isNotification);
     DBProvider.db.updatePlan(this.toMap());
   }

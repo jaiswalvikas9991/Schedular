@@ -128,17 +128,16 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
                 )
               ],
             ),
-            Expanded(
-              child: ListView.builder(
-                  itemCount: this._bucketList.length,
-                  itemBuilder: (BuildContext context, int index) => Animator(
-                        duration: 500,
-                        child: BucketCard(
-                            bucket: this._bucketList[index],
-                            delete: this._deleteBucket,
-                            index: index),
-                      )),
-            ),
+            ListView.builder(
+                shrinkWrap: true,
+                itemCount: this._bucketList.length,
+                itemBuilder: (BuildContext context, int index) => Animator(
+                      duration: 500,
+                      child: BucketCard(
+                          bucket: this._bucketList[index],
+                          delete: this._deleteBucket,
+                          index: index),
+                    )),
           ],
         ),
       )),

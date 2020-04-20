@@ -24,8 +24,8 @@ dependencies:
   uuid: ^2.0.2
   flutter_datetime_picker: ^1.2.8
   sqflite: ^1.1.7+1
-  path_provider: any
-  flutter_local_notifications: ^0.8.4+3
+  path_provider: ^1.6.5
+  flutter_local_notifications: ^1.4.0
   intl: ^0.16.0
   charts_flutter: ^0.8.1
   shared_preferences: ^0.5.6+3

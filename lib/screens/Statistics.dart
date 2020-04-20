@@ -17,22 +17,61 @@ class Statistics extends StatelessWidget {
   Widget build(BuildContext context) {
     final PlanListBloc _planListBloc = Provider.of<PlanListBloc>(context);
     return Scaffold(
-      body: StreamBuilder<List<PlanBloc>>(
-          stream: _planListBloc.allPlanObservable,
-          builder: (context, snapshot) {
-            return snapshot.hasData && snapshot.data.length != 0
-                ? this._check(snapshot.data)
-                    ? Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: DateTimeChart(data: snapshot.data),
-                      )
-                    : PlaceHolder(
-                        data:
-                            "No Ratings Given \n Go to Plan Tab and \n Rate your \n completed Plans.")
-                : PlaceHolder(
-                    data:
-                        "No data for ${DateFormat.yMMMEd().format(DateTime.now())} \n Go to Plan Tab and \n Click + to add a Plan");
-          }),
+      body: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Expanded(
+              child: StreamBuilder<List<PlanBloc>>(
+                  stream: _planListBloc.allPlanObservable,
+                  builder: (context, snapshot) {
+                    return snapshot.hasData && snapshot.data.length != 0
+                        ? this._check(snapshot.data)
+                            ? DateTimeChart(data: snapshot.data)
+                            : PlaceHolder(
+                                data:
+                                    "No Ratings Given \n Go to Plan Tab and \n Rate your \n completed Plans.")
+                        : PlaceHolder(
+                            data:
+                                "No data for ${DateFormat.yMMMEd().format(DateTime.now())} \n Go to Plan Tab and \n Click + to add a Plan");
+                  }),
+            ),
+            Text("Today", style: Theme.of(context).textTheme.body2),
+            Expanded(
+              child: StreamBuilder<List<PlanBloc>>(
+                  stream: _planListBloc.allPlanObservable,
+                  builder: (context, snapshot) {
+                    return snapshot.hasData && snapshot.data.length != 0
+                        ? this._check(snapshot.data)
+                            ? DateTimeChart(data: snapshot.data)
+                            : PlaceHolder(
+                                data:
+                                    "No Ratings Given \n Go to Plan Tab and \n Rate your \n completed Plans.")
+                        : PlaceHolder(
+                            data:
+                                "No data for ${DateFormat.yMMMEd().format(DateTime.now())} \n Go to Plan Tab and \n Click + to add a Plan");
+                  }),
+            ),
+            Text("Weekly", style: Theme.of(context).textTheme.body2),
+            Expanded(
+              child: StreamBuilder<List<PlanBloc>>(
+                  stream: _planListBloc.allPlanObservable,
+                  builder: (context, snapshot) {
+                    return snapshot.hasData && snapshot.data.length != 0
+                        ? this._check(snapshot.data)
+                            ? DateTimeChart(data: snapshot.data)
+                            : PlaceHolder(
+                                data:
+                                    "No Ratings Given \n Go to Plan Tab and \n Rate your \n completed Plans.")
+                        : PlaceHolder(
+                            data:
+                                "No data for ${DateFormat.yMMMEd().format(DateTime.now())} \n Go to Plan Tab and \n Click + to add a Plan");
+                  }),
+            ),
+            Text("Monthly", style: Theme.of(context).textTheme.body2)
+          ],
+        ),
+      ),
     );
   }
 }
