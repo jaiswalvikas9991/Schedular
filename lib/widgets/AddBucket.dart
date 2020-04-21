@@ -9,7 +9,7 @@ class AddBucket extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          borderRadius: BorderRadius.all(Radius.circular(10.0))),
       title: Text("Bucket Name",
           style: Theme.of(context)
               .textTheme
@@ -24,7 +24,7 @@ class AddBucket extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .body2
-                    .copyWith(color: const Color(0xff48c6ef))),
+                    .copyWith(color: Theme.of(context).primaryColor)),
             onPressed: () {
               Navigator.of(context).pop();
             }),
@@ -33,7 +33,7 @@ class AddBucket extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .body2
-                    .copyWith(color: const Color(0xff48c6ef))),
+                    .copyWith(color: Theme.of(context).primaryColor)),
             onPressed: () {
               Navigator.pop(context, this._controller.text);
             })

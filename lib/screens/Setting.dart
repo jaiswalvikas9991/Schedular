@@ -9,9 +9,14 @@ import 'package:schedular/widgets/BucketCard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:schedular/utils/Animate.dart';
 import 'package:schedular/utils/DBProvider.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class Setting extends StatefulWidget {
-  Setting({Key key}) : super(key: key);
+  final Function changePrimaryColor;
+  final Color currrentPrimaryColor;
+  Setting(
+      {Key key, this.changePrimaryColor, @required this.currrentPrimaryColor})
+      : super(key: key);
   @override
   _SettingState createState() => _SettingState();
 }
@@ -97,16 +102,80 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(
-                  "Upload Data",
-                  style: Theme.of(context).textTheme.headline.copyWith(
-                      color: Color(0xff48c6ef), fontWeight: FontWeight.bold),
-                  key: UniqueKey(),
-                ),
+                Text("Save Data",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline
+                        .copyWith(color: Theme.of(context).primaryColor),
+                    key: UniqueKey()),
                 IconButton(
                   onPressed: this._copyDb,
                   icon: Icon(LineIcons.upload),
                   color: Colors.black,
+                  tooltip: "Save data to Memory",
+                )
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text("Change Color",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline
+                        .copyWith(color: Theme.of(context).primaryColor),
+                    key: UniqueKey()),
+                IconButton(
+                  icon: Icon(LineIcons.paint_brush),
+                  color: Colors.black,
+                  tooltip: "Change App Color",
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      child: AlertDialog(
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0))),
+                        title: const Text('Pick a color'),
+                        content: Container(
+                          height: MediaQuery.of(context).size.height * 0.30,
+                          child: SingleChildScrollView(
+                            child: MaterialPicker(
+                              pickerColor: widget.currrentPrimaryColor,
+                              onColorChanged: widget.changePrimaryColor,
+                              //showLabel: true,
+                              //pickerAreaHeightPercent: 0.8,
+                            ),
+                          ),
+                        ),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text('Done',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .body2
+                                    .copyWith(
+                                        color: Theme.of(context).primaryColor)),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          FlatButton(
+                            child: Text('Default',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .body2
+                                    .copyWith(
+                                        color: Theme.of(context).primaryColor)),
+                            onPressed: () {
+                              widget.changePrimaryColor(Color(0xff48c6ef));
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 )
               ],
             ),
@@ -114,9 +183,11 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  "Task Name",
-                  style: Theme.of(context).textTheme.headline.copyWith(
-                      color: Color(0xff48c6ef), fontWeight: FontWeight.bold),
+                  "Task Categories",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline
+                      .copyWith(color: Theme.of(context).primaryColor),
                   key: UniqueKey(),
                 ),
                 IconButton(
@@ -125,6 +196,7 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
                   },
                   icon: Icon(LineIcons.plus),
                   color: Colors.black,
+                  tooltip: "Add a new Task Category",
                 )
               ],
             ),

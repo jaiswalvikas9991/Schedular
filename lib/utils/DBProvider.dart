@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:path/path.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
 import 'package:schedular/bloc/TodoBloc.dart';
+import 'package:schedular/utils/constants.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -114,6 +115,44 @@ class DBProvider {
   deletePlan(String id) async {
     final db = await database;
     db.delete("plan", where: "id = ?", whereArgs: [id]);
+  }
+
+  List<String> _getWeekListFromDate(String date) {
+    List<String> list = new List<String>();
+    for (int i = 0; i <= 7; i++)
+      list.add(dateTimeToString(DateTime.now().subtract(Duration(days: i))));
+      print(list);
+    return (list);
+  }
+
+  getPlanWeek(String date) async {
+    final db = await database;
+    var res = await db.rawQuery('SELECT * FROM plan WHERE date IN (?, ?, ?, ?, ?, ?, ?, ?)', this._getWeekListFromDate(date));
+    List<PlanBloc> result = [];
+    for (int i = 0; i < res.length; i++) {
+      result.add(PlanBloc.fromMap(res[i]));
+    }
+    List<PlanBloc> list = res.isNotEmpty ? result : [];
+    print("This is result : " + result.toString());
+    return list;
+  }
+
+  List<String> _getMonthListFromDate(String date) {
+    List<String> list = new List<String>();
+    for (int i = 0; i <= 30; i++)
+      list.add(dateTimeToString(DateTime.now().subtract(Duration(days: i))));
+    return (list);
+  }
+
+  getPlanMonth(String date) async {
+    final db = await database;
+    var res = await db.rawQuery('SELECT * FROM plan WHERE date IN (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', this._getMonthListFromDate(date));
+    List<PlanBloc> result = [];
+    for (int i = 0; i < res.length; i++) {
+      result.add(PlanBloc.fromMap(res[i]));
+    }
+    List<PlanBloc> list = res.isNotEmpty ? result : [];
+    return list;
   }
 
   Future<String> copyDb() async {

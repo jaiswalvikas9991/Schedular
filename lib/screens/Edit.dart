@@ -50,6 +50,7 @@ class _EditState extends State<Edit> {
       body: Stack(
         children: <Widget>[
           ListView(
+            shrinkWrap: true,
             children: <Widget>[
               this._renderImage(context),
               Padding(
@@ -250,7 +251,7 @@ class _EditState extends State<Edit> {
         IconButton(
           icon: Icon(
             this._isBeingEdited ? LineIcons.save : LineIcons.pencil,
-            color: Color(0xff48c6ef),
+            color: Theme.of(context).primaryColor,
           ),
           onPressed: () {
             this.setState(() {
@@ -298,7 +299,9 @@ class _EditState extends State<Edit> {
             },
             child: CircleAvatar(
                 backgroundColor: Colors.white,
-                child: Icon(Icons.arrow_back_ios)),
+                child: Icon(Icons.arrow_back_ios,
+                color: Theme.of(context).primaryColor,
+                )),
           ),
         ),
       ),
@@ -321,7 +324,9 @@ class _EditState extends State<Edit> {
                   child: CircleAvatar(
                       backgroundColor: Colors.white,
                       child: Icon(
-                          snapshot.data ? Icons.alarm_on : Icons.alarm_off)),
+                          snapshot.data ? Icons.alarm_on : Icons.alarm_off,
+                          color: Theme.of(context).primaryColor,
+                          )),
                 );
               }),
         ),

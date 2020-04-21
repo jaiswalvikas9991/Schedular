@@ -79,15 +79,13 @@ class _PlanState extends State<Plan> {
                 onPressed: () {
                   _planListBloc.addPlan(widget.date);
                 },
+                tooltip: "Add new Plan",
               )
             ],
           ),
           Text(this._greeting(),
-              style: TextStyle(
-                  color: Color(0xff48c6ef),
-                  fontFamily: 'Schyler',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25)),
+              style: Theme.of(context).textTheme.headline.copyWith(color : Theme.of(context).primaryColor)
+              ),
           Text("Let's plan",
               style: TextStyle(
                   color: Colors.black,
@@ -110,6 +108,7 @@ class _PlanState extends State<Plan> {
                           },
                         )
                       : PlaceHolder(
+                        fontSize: 20.0,
                           data: "Click on the + icon to \n add a plan");
                 }),
           ),

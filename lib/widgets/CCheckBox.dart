@@ -23,7 +23,7 @@ class _CCheckBoxState extends State<CCheckBox> {
                 ? Icon(
                     Icons.check_circle,
                     size: 22.0,
-                    color: widget.activeColor ?? Colors.green,
+                    color: widget.activeColor ?? Theme.of(context).primaryColor,
                   )
                 : Icon(
                     Icons.check_circle_outline,

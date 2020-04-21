@@ -40,7 +40,7 @@ class DateTimeChart extends StatelessWidget {
           measureFn: (PlanBloc planBloc, _) => planBloc.getRating(),
           fillColorFn: (PlanBloc planBloc, int _) =>
               charts.ColorUtil.fromDartColor(
-                  this.color[planBloc.getRating() - 1]))
+                  this.color[planBloc.getRating() - 1])),
     ];
   }
 
@@ -59,6 +59,8 @@ class DateTimeChart extends StatelessWidget {
         new charts.PanAndZoomBehavior(),
         //LinePointHighlighter(symbolRenderer: CustomCircleSymbolRenderer())
       ],
+      domainAxis: new charts.EndPointsTimeAxisSpec(),
+
       // selectionModels: [
       //   SelectionModelConfig(
       //     changedListener: (SelectionModel model) {

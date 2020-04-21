@@ -28,14 +28,14 @@ class _TodoState extends State<Todo> {
       child: ButtonBar(
         children: <Widget>[
           FlatButton(
-            textColor: Color(0xff48c6ef),
+            textColor: Theme.of(context).primaryColor,
             child: const Text('DELETE'),
             onPressed: () {
               _todoListBloc.deleteTodo(widget.todoBloc.id);
             },
           ),
           FlatButton(
-            textColor: Color(0xff48c6ef),
+            textColor: Theme.of(context).primaryColor,
             child: Text(this._isBeingEdited ? 'SAVE' : 'EDIT'),
             onPressed: () {
               if (this._isBeingEdited == true &&

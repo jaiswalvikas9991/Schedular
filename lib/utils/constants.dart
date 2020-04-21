@@ -1,0 +1,1 @@
+String dateTimeToString(DateTime dateTime) => dateTime.toString().substring(0, 11).replaceAll(' ', '');

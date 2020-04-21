@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
 import 'package:schedular/bloc/PlanListBloc.dart';
+import 'package:schedular/utils/DBProvider.dart';
 import 'package:schedular/utils/Provider.dart';
+import 'package:schedular/utils/constants.dart';
 import 'package:schedular/widgets/DateTimeChart.dart';
 import 'package:schedular/widgets/PlaceHolder.dart';
 
@@ -38,37 +40,31 @@ class Statistics extends StatelessWidget {
             ),
             Text("Today", style: Theme.of(context).textTheme.body2),
             Expanded(
-              child: StreamBuilder<List<PlanBloc>>(
-                  stream: _planListBloc.allPlanObservable,
-                  builder: (context, snapshot) {
+              child: FutureBuilder(
+                  future: DBProvider.db
+                      .getPlanWeek(dateTimeToString(DateTime.now())),
+                  builder: (contex, snapshot) {
                     return snapshot.hasData && snapshot.data.length != 0
                         ? this._check(snapshot.data)
                             ? DateTimeChart(data: snapshot.data)
-                            : PlaceHolder(
-                                data:
-                                    "No Ratings Given \n Go to Plan Tab and \n Rate your \n completed Plans.")
-                        : PlaceHolder(
-                            data:
-                                "No data for ${DateFormat.yMMMEd().format(DateTime.now())} \n Go to Plan Tab and \n Click + to add a Plan");
+                            : PlaceHolder(data: "No Enough Data")
+                        : PlaceHolder(data: "No Enough Data");
                   }),
             ),
             Text("Weekly", style: Theme.of(context).textTheme.body2),
             Expanded(
-              child: StreamBuilder<List<PlanBloc>>(
-                  stream: _planListBloc.allPlanObservable,
-                  builder: (context, snapshot) {
+              child: FutureBuilder(
+                  future: DBProvider.db
+                      .getPlanMonth(dateTimeToString(DateTime.now())),
+                  builder: (contex, snapshot) {
                     return snapshot.hasData && snapshot.data.length != 0
                         ? this._check(snapshot.data)
                             ? DateTimeChart(data: snapshot.data)
-                            : PlaceHolder(
-                                data:
-                                    "No Ratings Given \n Go to Plan Tab and \n Rate your \n completed Plans.")
-                        : PlaceHolder(
-                            data:
-                                "No data for ${DateFormat.yMMMEd().format(DateTime.now())} \n Go to Plan Tab and \n Click + to add a Plan");
+                            : PlaceHolder(data: "No Enough Data")
+                        : PlaceHolder(data: "No Enough Data");
                   }),
             ),
-            Text("Monthly", style: Theme.of(context).textTheme.body2)
+            Text("Monthly", style: Theme.of(context).textTheme.body2),
           ],
         ),
       ),

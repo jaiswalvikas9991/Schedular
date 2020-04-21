@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 
 class PlaceHolder extends StatelessWidget {
   final String data;
-  const PlaceHolder({@required this.data, key}) : super(key: key);
+  final double fontSize;
+  const PlaceHolder({@required this.data, this.fontSize, key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Text(this.data,
           textAlign: TextAlign.center,
-          style: Theme.of(context)
-              .textTheme
-              .headline
-              .copyWith(color: Color(0xff48c6ef), fontFamily: "Schyler")),
+          style: Theme.of(context).textTheme.body1.copyWith(
+              color: Theme.of(context).primaryColor, fontFamily: "Schyler", fontSize: this.fontSize)),
     );
   }
 }

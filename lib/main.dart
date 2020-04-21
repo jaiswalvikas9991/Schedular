@@ -10,6 +10,7 @@ import 'package:schedular/utils/Provider.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:schedular/screens/Statistics.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:schedular/utils/constants.dart';
 
 // Flutter notification is a singleton itself.
 void main() => runApp(MyApp());
@@ -21,12 +22,13 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   TabController _tabController;
-  String _centralDate =
-      DateTime.now().toString().substring(0, 11).replaceAll(' ', '');
+  String _centralDate = dateTimeToString(DateTime.now());
   FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
 
   PlanListBloc _planListBloc;
   TodoListBloc _todoListBloc;
+
+  Color _primaryColor = Color(0xff48c6ef);
 
   @override
   void initState() {
@@ -50,9 +52,18 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     }
   }
 
+  void _changePrimaryColor(Color color) {
+    if (this._primaryColor != color)
+      this.setState(() {
+        this._primaryColor = color;
+      });
+  }
+
   bool changeCentralDate(String date) {
     if (this._centralDate != date) {
-      this._centralDate = date;
+      this.setState(() {
+        this._centralDate = date;
+      });
       return (true);
     }
     return (false);
@@ -66,7 +77,9 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
         Home(this.changeCentralDate),
         Plan(this._centralDate),
         Statistics(),
-        Setting()
+        Setting(
+            changePrimaryColor: this._changePrimaryColor,
+            currrentPrimaryColor: this._primaryColor)
       ],
     );
   }
@@ -75,7 +88,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Schedular',
-      theme: theme(),
+      theme: theme(primaryColor: this._primaryColor),
       home: DefaultTabController(
         length: 4,
         child: Scaffold(
@@ -106,21 +119,13 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
         child: TabBar(
           isScrollable: false,
           indicatorColor: Colors.transparent,
-          labelColor: Theme.of(context).primaryColor,
+          labelColor: this._primaryColor,
           unselectedLabelColor: Colors.black,
           tabs: <Widget>[
-            Tab(
-              icon: Icon(LineIcons.home),
-            ),
-            Tab(
-              icon: Icon(LineIcons.pencil),
-            ),
-            Tab(
-              icon: Icon(LineIcons.line_chart),
-            ),
-            Tab(
-              icon: Icon(LineIcons.cog),
-            ),
+            Tab(icon: Icon(LineIcons.home)),
+            Tab(icon: Icon(LineIcons.pencil)),
+            Tab(icon: Icon(LineIcons.line_chart)),
+            Tab(icon: Icon(LineIcons.cog)),
           ],
           controller: _tabController,
         ),

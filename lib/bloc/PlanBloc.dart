@@ -1,6 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:schedular/utils/DBProvider.dart';
+import 'package:schedular/utils/constants.dart';
 
 class PlanBloc {
   // Real Date
@@ -11,7 +12,7 @@ class PlanBloc {
   DateTime _fromTime = DateTime.now();
   DateTime _toTime = DateTime.now().add(new Duration(minutes: 45));
   bool _isNotification = false;
-  String _date = DateTime.now().toString().substring(0, 11).replaceAll(' ', '');
+  String _date = dateTimeToString(DateTime.now());
   String _bucket = "";
   // bool _isAlarm;
 
@@ -40,8 +41,7 @@ class PlanBloc {
     this._fromTime = fromTime ?? this._fromTime;
     this._toTime = toTime ?? this._toTime;
     this._isNotification = isNotification ?? this._isNotification;
-    this._date =
-        date ?? DateTime.now().toString().substring(0, 11).replaceAll(' ', '');
+    this._date = date ?? dateTimeToString(DateTime.now());
     this._bucket = bucket ?? "";
 
     _subjectIsChecked.sink.add(this._isChecked);
