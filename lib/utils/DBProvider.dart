@@ -121,7 +121,7 @@ class DBProvider {
     List<String> list = new List<String>();
     for (int i = 0; i <= 7; i++)
       list.add(dateTimeToString(DateTime.now().subtract(Duration(days: i))));
-      print(list);
+      //print(list);
     return (list);
   }
 
@@ -133,7 +133,7 @@ class DBProvider {
       result.add(PlanBloc.fromMap(res[i]));
     }
     List<PlanBloc> list = res.isNotEmpty ? result : [];
-    print("This is result : " + result.toString());
+    //print("This is result : " + result.toString());
     return list;
   }
 

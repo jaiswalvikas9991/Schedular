@@ -169,6 +169,7 @@ class _EditState extends State<Edit> {
                             .textTheme
                             .body2
                             .copyWith(fontSize: 18)),
+                    SizedBox(width: 10),
                     Icon(
                       LineIcons.pencil,
                       color: Theme.of(context).primaryColor,
@@ -207,6 +208,7 @@ class _EditState extends State<Edit> {
                             .textTheme
                             .body2
                             .copyWith(fontSize: 18)),
+                    SizedBox(width: 10),
                     Icon(LineIcons.pencil,
                         color: Theme.of(context).primaryColor)
                   ],
@@ -299,8 +301,9 @@ class _EditState extends State<Edit> {
             },
             child: CircleAvatar(
                 backgroundColor: Colors.white,
-                child: Icon(Icons.arrow_back_ios,
-                color: Theme.of(context).primaryColor,
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  color: Theme.of(context).primaryColor,
                 )),
           ),
         ),
@@ -324,9 +327,9 @@ class _EditState extends State<Edit> {
                   child: CircleAvatar(
                       backgroundColor: Colors.white,
                       child: Icon(
-                          snapshot.data ? Icons.alarm_on : Icons.alarm_off,
-                          color: Theme.of(context).primaryColor,
-                          )),
+                        snapshot.data ? Icons.alarm_on : Icons.alarm_off,
+                        color: Theme.of(context).primaryColor,
+                      )),
                 );
               }),
         ),

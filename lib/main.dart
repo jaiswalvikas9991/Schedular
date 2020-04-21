@@ -11,6 +11,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:schedular/screens/Statistics.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:schedular/utils/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Flutter notification is a singleton itself.
 void main() => runApp(MyApp());
@@ -34,6 +35,12 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    //* Getting the app color
+    SharedPreferences.getInstance().then((SharedPreferences prefs){
+      this.setState((){
+        this._primaryColor = Color(int.parse('0xff' + prefs.get('color')));
+      }); 
+    });
     //* Initializing the block
     this._todoListBloc = new TodoListBloc();
     this._planListBloc = new PlanListBloc();
@@ -53,10 +60,14 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   }
 
   void _changePrimaryColor(Color color) {
-    if (this._primaryColor != color)
+    if (this._primaryColor != color) {
+      SharedPreferences.getInstance().then((SharedPreferences prefs){
+        prefs.setString('color', color.toString().substring(10,16));
+      });
       this.setState(() {
         this._primaryColor = color;
       });
+    }
   }
 
   bool changeCentralDate(String date) {

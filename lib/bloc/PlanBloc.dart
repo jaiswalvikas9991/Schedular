@@ -120,10 +120,12 @@ class PlanBloc {
       this._fromTime = time;
       // This is to respond to the time changes when the notifications are on
       if (this._isNotification) {
-        // FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-        //     new FlutterLocalNotificationsPlugin();
-        // await _flutterLocalNotificationsPlugin.cancel(this.id.hashCode);
-        // this._setNotification();
+        //! UnComment this to enabel notification
+        FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+            new FlutterLocalNotificationsPlugin();
+        await _flutterLocalNotificationsPlugin.cancel(this.id.hashCode);
+        this._setNotification();
+        //! Comment ends hear
       }
       this._subjectFromTime.sink.add(this._fromTime);
       DBProvider.db.updatePlan(this.toMap());
@@ -151,13 +153,15 @@ class PlanBloc {
   Future<void> updateNotificationState() async {
     this._isNotification = !this._isNotification;
 
-    // if (_isNotification) {
-    //   await this._setNotification();
-    // } else {
-    //   FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-    //       new FlutterLocalNotificationsPlugin();
-    //   await _flutterLocalNotificationsPlugin.cancel(this.id.hashCode);
-    // }
+    //! UnCommenty this to enabel notification
+    if (_isNotification) {
+      await this._setNotification();
+    } else {
+      FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+          new FlutterLocalNotificationsPlugin();
+      await _flutterLocalNotificationsPlugin.cancel(this.id.hashCode);
+    }
+    //! Comment ends hear
     _subjectIsNotification.sink.add(this._isNotification);
     DBProvider.db.updatePlan(this.toMap());
   }
