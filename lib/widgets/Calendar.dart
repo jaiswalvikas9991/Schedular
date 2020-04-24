@@ -25,7 +25,7 @@ class _CalendarState extends State<Calendar> {
       ),
       child: TableCalendar(
         calendarController: _calendarController,
-        initialCalendarFormat: CalendarFormat.month,
+        initialCalendarFormat: CalendarFormat.week,
         availableCalendarFormats: const {
           CalendarFormat.month: 'Month',
           CalendarFormat.week: 'Week',

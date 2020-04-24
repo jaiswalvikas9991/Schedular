@@ -3,6 +3,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:schedular/bloc/PlanListBloc.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
 import 'package:schedular/screens/Edit.dart';
+import 'package:schedular/utils/FromStream.dart';
 import 'package:schedular/utils/Provider.dart';
 import 'package:intl/intl.dart';
 
@@ -43,7 +44,9 @@ class _PlanCardState extends State<PlanCard> {
               borderRadius: BorderRadius.circular(40),
               boxShadow: [
                 BoxShadow(
-                  color: widget.active ? Theme.of(context).primaryColor : Colors.transparent,
+                  color: widget.active
+                      ? Theme.of(context).primaryColor
+                      : Colors.transparent,
                   blurRadius: widget.active ? 0 : 0,
                 ),
               ],
@@ -82,14 +85,14 @@ class _PlanCardState extends State<PlanCard> {
                   height: 20.0,
                 ),
                 Expanded(
-                    child: StreamBuilder<String>(
+                    child: FromStream<String>(
                         stream: widget.planBloc.descriptionObservable,
                         initialData: "Describe this awsome task to me...",
-                        builder: (context, snapshot) {
+                        child: (String data) {
                           return Text(
-                            snapshot.data == ''
+                            data == ''
                                 ? "Describe this awsome task to me..."
-                                : snapshot.data,
+                                : data,
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.normal),
                           );
@@ -98,14 +101,12 @@ class _PlanCardState extends State<PlanCard> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    StreamBuilder<bool>(
+                    FromStream<bool>(
                         stream: widget.planBloc.isNotificationObservable,
                         initialData: false,
-                        builder: (context, snapshot) {
+                        child: (bool data) {
                           return IconButton(
-                            icon: Icon(snapshot.data
-                                ? Icons.alarm_on
-                                : Icons.alarm_off),
+                            icon: Icon(data ? Icons.alarm_on : Icons.alarm_off),
                             onPressed: widget.planBloc.updateNotificationState,
                           );
                         }),

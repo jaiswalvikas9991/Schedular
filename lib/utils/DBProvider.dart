@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:path/path.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
 import 'package:schedular/bloc/TodoBloc.dart';
-import 'package:schedular/utils/constants.dart';
+import 'package:schedular/utils/Constants.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 

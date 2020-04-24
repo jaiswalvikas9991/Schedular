@@ -10,7 +10,7 @@ import 'package:schedular/utils/Provider.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:schedular/screens/Statistics.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:schedular/utils/constants.dart';
+import 'package:schedular/utils/Constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Flutter notification is a singleton itself.
@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
         this._primaryColor = Color(int.parse('0xff' + prefs.get('color')));
       }); 
     });
-    //* Initializing the block
+    //* Initializing the bloc
     this._todoListBloc = new TodoListBloc();
     this._planListBloc = new PlanListBloc();
     // initializing the flutter notification plugin

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:schedular/bloc/TodoBloc.dart';
 import 'package:schedular/bloc/TodoListBloc.dart';
 import 'package:schedular/utils/Animate.dart';
+import 'package:schedular/utils/FromStream.dart';
 import 'package:schedular/utils/Provider.dart';
-import 'package:schedular/utils/constants.dart';
+import 'package:schedular/utils/Constants.dart';
 import 'package:schedular/widgets/Calendar.dart';
 import 'package:schedular/widgets/PlaceHolder.dart';
 import 'package:schedular/widgets/Todo.dart';
@@ -39,7 +40,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                 onDayPressed: (DateTime dateTime) {
                   bool isChanged =
                       this.widget.changeCentralDate(dateTimeToString(dateTime));
-
                   if (isChanged) {
                     _planListBloc.clearALlPlan();
                     _planListBloc.initialRender(dateTimeToString(dateTime));
@@ -50,25 +50,22 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
               indent: MediaQuery.of(context).size.width * 0.06,
               endIndent: MediaQuery.of(context).size.width * 0.06,
             ),
-            StreamBuilder<List<TodoBloc>>(
-                stream: _todoListBloc.allTodoObservable,
-                builder: (context, AsyncSnapshot<List<TodoBloc>> snapshot) {
-                  return snapshot.hasData && snapshot.data.length != 0
-                      ? Expanded(
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: snapshot.data.length,
-                              itemBuilder: (BuildContext context, int index) =>
-                                  Animator(
-                                      duration: 200,
-                                      child: Todo(snapshot.data[index]))),
-                        )
-                      : Expanded(
-                          child: Center(
-                              child: PlaceHolder(
-                                  fontSize: 20.0,
-                                  data: "This is the Notes \n Taking Area")));
-                })
+            FromStream<List<TodoBloc>>(
+              stream: _todoListBloc.allTodoObservable,
+              child: (List<TodoBloc> data) => Expanded(
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: data.length,
+                    itemBuilder: (BuildContext context, int index) =>
+                        Animator(duration: 200, child: Todo(data[index]))),
+              ),
+              placeholder: Expanded(
+                  child: Center(
+                      child: PlaceHolder(
+                          fontSize: 20.0,
+                          data: "This is the Notes \n Taking Area"))),
+              condition: (List<TodoBloc> data) => true,
+            ),
           ],
         ),
       ),

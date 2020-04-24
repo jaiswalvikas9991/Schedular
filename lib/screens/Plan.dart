@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schedular/bloc/PlanListBloc.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
+import 'package:schedular/utils/FromStream.dart';
 import 'package:schedular/widgets/PlaceHolder.dart';
 import 'package:schedular/widgets/PlanCard.dart';
 import 'package:schedular/utils/Provider.dart';
@@ -51,7 +52,6 @@ class _PlanState extends State<Plan> {
 
   String _greeting() {
     var hour = DateTime.now().hour;
-    // debugPrint(hour.toString());
     if (hour >= 3 && hour < 12) return 'Good Morning';
     if (hour >= 12 && hour < 17) return 'Good Afternoon';
     if (hour >= 17 && hour < 21) return 'Good Evening';
@@ -84,8 +84,10 @@ class _PlanState extends State<Plan> {
             ],
           ),
           Text(this._greeting(),
-              style: Theme.of(context).textTheme.headline.copyWith(color : Theme.of(context).primaryColor)
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .headline
+                  .copyWith(color: Theme.of(context).primaryColor)),
           Text("Let's plan",
               style: TextStyle(
                   color: Colors.black,
@@ -93,23 +95,23 @@ class _PlanState extends State<Plan> {
                   fontWeight: FontWeight.bold,
                   fontSize: 25)),
           Expanded(
-            child: StreamBuilder<List<PlanBloc>>(
+            child: FromStream<List<PlanBloc>>(
                 stream: _planListBloc.allPlanObservable,
-                builder: (context, AsyncSnapshot<List<PlanBloc>> snapshot) {
-                  return snapshot.hasData && snapshot.data.length != 0
-                      ? PageView.builder(
-                          controller: this._pageController,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (context, int currentIndex) {
-                            bool active = this._currentPage == currentIndex;
-                            return this._renderPage(active,
-                                snapshot.data[currentIndex], currentIndex);
-                          },
-                        )
-                      : PlaceHolder(
-                        fontSize: 20.0,
-                          data: "Click on the + icon to \n add a plan");
+                condition: (List<PlanBloc> data) => data.length != 0,
+                placeholder: PlaceHolder(
+                    fontSize: 20.0,
+                    data: "Click on the + icon to \n add a plan"),
+                child: (List<PlanBloc> data) {
+                  return PageView.builder(
+                    controller: this._pageController,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: data.length,
+                    itemBuilder: (context, int currentIndex) {
+                      bool active = this._currentPage == currentIndex;
+                      return this._renderPage(
+                          active, data[currentIndex], currentIndex);
+                    },
+                  );
                 }),
           ),
         ],

@@ -3,6 +3,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:schedular/utils/FromStream.dart';
 import 'package:schedular/widgets/Rating.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,9 +18,13 @@ class Edit extends StatefulWidget {
 }
 
 class _EditState extends State<Edit> {
-  final TextEditingController _textController = new TextEditingController();
+  TextEditingController _textController;
   bool _isBeingEdited = false;
   List<String> _buckets = new List<String>();
+
+  _EditState() {
+    this._textController = new TextEditingController();
+  }
 
   @override
   void initState() {
@@ -60,15 +65,12 @@ class _EditState extends State<Edit> {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        StreamBuilder<String>(
+                        FromStream<String>(
                             stream: widget.planBloc.bucketObservable,
                             initialData: "Select a Task Type",
-                            builder: (BuildContext context,
-                                AsyncSnapshot<String> snapshot) {
+                            child: (String data) {
                               return Text(
-                                snapshot.data.isEmpty
-                                    ? "Select a Task Type"
-                                    : snapshot.data,
+                                data.isEmpty ? "Select a Task Type" : data,
                                 style: TextStyle(
                                     color: Theme.of(context).primaryColor),
                               );
@@ -106,10 +108,10 @@ class _EditState extends State<Edit> {
                       children: <Widget>[
                         Text("Rating",
                             style: Theme.of(context).textTheme.body2),
-                        StreamBuilder<int>(
+                        FromStream<int>(
                             stream: widget.planBloc.ratingObservable,
                             initialData: 0,
-                            builder: (context, snapshot) {
+                            child: (int data) {
                               return Row(
                                 children: <Widget>[
                                   Rating(
@@ -117,7 +119,7 @@ class _EditState extends State<Edit> {
                                     onPressed: (int index) {
                                       widget.planBloc.updateRating(index + 1);
                                     },
-                                    currentIndex: snapshot.data,
+                                    currentIndex: data,
                                   ),
                                   IconButton(
                                       icon: Icon(LineIcons.close,
@@ -150,10 +152,10 @@ class _EditState extends State<Edit> {
           "End   : ",
           style: Theme.of(context).textTheme.body2.copyWith(fontSize: 18),
         ),
-        StreamBuilder<DateTime>(
+        FromStream<DateTime>(
             stream: widget.planBloc.toTimeObservable,
             initialData: DateTime.now(),
-            builder: (context, snapshot) {
+            child: (DateTime data) {
               return GestureDetector(
                 onTap: () {
                   DatePicker.showTimePicker(context,
@@ -164,7 +166,7 @@ class _EditState extends State<Edit> {
                 },
                 child: Row(
                   children: <Widget>[
-                    Text(DateFormat.jms().format(snapshot.data),
+                    Text(DateFormat.jms().format(data),
                         style: Theme.of(context)
                             .textTheme
                             .body2
@@ -189,10 +191,10 @@ class _EditState extends State<Edit> {
           "Start : ",
           style: Theme.of(context).textTheme.body2.copyWith(fontSize: 18),
         ),
-        StreamBuilder<DateTime>(
+        FromStream<DateTime>(
             stream: widget.planBloc.fromTimeObservable,
             initialData: new DateTime.now(),
-            builder: (context, snapshot) {
+            child: (DateTime data) {
               return GestureDetector(
                 onTap: () {
                   DatePicker.showTimePicker(context,
@@ -203,7 +205,7 @@ class _EditState extends State<Edit> {
                 },
                 child: Row(
                   children: <Widget>[
-                    Text(DateFormat.jms().format(snapshot.data),
+                    Text(DateFormat.jms().format(data),
                         style: Theme.of(context)
                             .textTheme
                             .body2
@@ -222,34 +224,37 @@ class _EditState extends State<Edit> {
   Row _renderTextField(BuildContext context) {
     return Row(
       children: <Widget>[
-        StreamBuilder<String>(
-            stream: widget.planBloc.descriptionObservable,
-            initialData: "Description",
-            builder: (context, snapshot) {
-              this._textController.text = snapshot.data;
-              return Expanded(
-                child: this._isBeingEdited
+        Flexible(
+          child: FromStream<String>(
+              stream: widget.planBloc.descriptionObservable,
+              initialData: "Description",
+              child: (String data) {
+                //this._textController.text = snapshot.data;
+                return this._isBeingEdited
                     ? TextField(
-                        style: TextStyle(fontFamily: "Schyler", fontSize: 35),
+                        style: TextStyle(
+                            fontFamily:
+                                Theme.of(context).textTheme.body1.fontFamily,
+                            fontSize: 32),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           labelText: "Enter Desciption...",
                         ),
-                        controller: _textController,
+                        controller: this._textController,
                       )
                     : Text(
-                        snapshot.data == ''
+                        data == ''
                             ? "Describe this awsome task to me......"
-                            : snapshot.data,
+                            : data,
                         style: TextStyle(
                             fontFamily: "Schyler",
                             fontSize: 35,
                             color: Colors.black),
-                      ),
-              );
-            }),
+                      );
+              }),
+        ),
         IconButton(
           icon: Icon(
             this._isBeingEdited ? LineIcons.save : LineIcons.pencil,
@@ -318,16 +323,16 @@ class _EditState extends State<Edit> {
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: StreamBuilder<bool>(
+          child: FromStream<bool>(
               stream: widget.planBloc.isNotificationObservable,
               initialData: true,
-              builder: (context, snapshot) {
+              child: (bool data) {
                 return GestureDetector(
                   onTap: widget.planBloc.updateNotificationState,
                   child: CircleAvatar(
                       backgroundColor: Colors.white,
                       child: Icon(
-                        snapshot.data ? Icons.alarm_on : Icons.alarm_off,
+                        data ? Icons.alarm_on : Icons.alarm_off,
                         color: Theme.of(context).primaryColor,
                       )),
                 );
@@ -335,5 +340,12 @@ class _EditState extends State<Edit> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    this._textController.clear();
+    this._textController.dispose();
+    super.dispose();
   }
 }

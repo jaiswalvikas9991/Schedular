@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schedular/bloc/TodoBloc.dart';
 import 'package:schedular/bloc/TodoListBloc.dart';
+import 'package:schedular/utils/FromStream.dart';
 import 'package:schedular/utils/Provider.dart';
 import 'package:schedular/widgets/CCheckBox.dart';
 
@@ -54,13 +55,16 @@ class _TodoState extends State<Todo> {
 
   Widget renderTextField() {
     return Expanded(
-      child: StreamBuilder<String>(
+      child: FromStream<String>(
           stream: widget.todoBloc.contentObservable,
           initialData: "Click on Edit",
-          builder: (context, AsyncSnapshot<String> snapshot) {
-            this._textController.text = snapshot.data;
+          child: (String data) {
+            this._textController.text = data;
             return (this._isBeingEdited
                 ? TextField(
+                    style: TextStyle(
+                        fontFamily:
+                            Theme.of(context).textTheme.body1.fontFamily),
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
                     decoration: InputDecoration(
@@ -70,7 +74,7 @@ class _TodoState extends State<Todo> {
                     controller: _textController,
                   )
                 : Text(
-                    snapshot.data == '' ? 'Click on edit...' : snapshot.data,
+                    data == '' ? 'Click on edit...' : data,
                     style: Theme.of(context).textTheme.body2,
                   ));
           }),
@@ -78,14 +82,14 @@ class _TodoState extends State<Todo> {
   }
 
   Widget renderCheckBox() {
-    return StreamBuilder<bool>(
+    return FromStream<bool>(
         stream: widget.todoBloc.isCheckedObservable,
         initialData: false,
-        builder: (context, AsyncSnapshot<bool> snapshot) {
+        child: (bool data) {
           return CCheckBox(
-            value: snapshot.data,
+            value: data,
             onTap: () {
-              widget.todoBloc.updateCheckedState(!snapshot.data);
+              widget.todoBloc.updateCheckedState(!data);
             },
           );
         });
@@ -112,7 +116,7 @@ class _TodoState extends State<Todo> {
   @override
   void dispose() {
     _textController.clear();
-    //_textController.dispose();
+    _textController.dispose();
     super.dispose();
   }
 }
