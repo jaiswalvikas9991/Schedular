@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schedular/bloc/TodoBloc.dart';
 import 'package:schedular/bloc/TodoListBloc.dart';
+import 'package:schedular/utils/ColorText.dart';
 import 'package:schedular/utils/FromStream.dart';
 import 'package:schedular/utils/Provider.dart';
 import 'package:schedular/widgets/CCheckBox.dart';
@@ -73,9 +74,10 @@ class _TodoState extends State<Todo> {
                     ),
                     controller: _textController,
                   )
-                : Text(
-                    data == '' ? 'Click on edit...' : data,
-                    style: Theme.of(context).textTheme.body2,
+                : colorText(
+                  context,
+                    text : data == '' ? 'Click on edit...' : data,
+                    style : Theme.of(context).textTheme.body2,
                   ));
           }),
     );

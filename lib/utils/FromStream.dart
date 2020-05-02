@@ -26,8 +26,7 @@ class FromStream<T> extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot<T> snapshot) {
         if (snapshot.hasError && this.onError != null)
           this.onError(snapshot.error);
-        if (snapshot.hasData &&
-            (this.condition == null ? true : this.condition(snapshot.data)))
+        if (snapshot.hasData && (this.condition == null ? true : this.condition(snapshot.data)))
           return (this.child == null ? Container() : this.child(snapshot.data));
         return (this.placeholder ?? Container());
       },

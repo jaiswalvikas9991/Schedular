@@ -64,7 +64,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                       child: PlaceHolder(
                           fontSize: 20.0,
                           data: "This is the Notes \n Taking Area"))),
-              condition: (List<TodoBloc> data) => true,
+              condition: (List<TodoBloc> data) => data.length != 0,
             ),
           ],
         ),
