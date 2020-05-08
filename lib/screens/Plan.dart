@@ -87,7 +87,7 @@ class _PlanState extends State<Plan> {
           Text(this._greeting(),
               style: Theme.of(context)
                   .textTheme
-                  .headline
+                  .headline5
                   .copyWith(color: Theme.of(context).primaryColor)),
           Text("Let's plan",
               style: TextStyle(

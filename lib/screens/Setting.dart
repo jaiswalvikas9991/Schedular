@@ -4,12 +4,14 @@ import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:schedular/utils/NaiveBayes.dart';
 import 'package:schedular/widgets/AddBucket.dart';
 import 'package:schedular/widgets/BucketCard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:schedular/utils/Animate.dart';
 import 'package:schedular/utils/DBProvider.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:schedular/utils/Constants.dart';
 
 class Setting extends StatefulWidget {
   final Function changePrimaryColor;
@@ -23,7 +25,6 @@ class Setting extends StatefulWidget {
 
 class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
   List<String> _bucketList = new List<String>();
-  final bucketKey = "keys";
 
   @override
   void initState() {
@@ -105,7 +106,7 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
                 Text("Save Data",
                     style: Theme.of(context)
                         .textTheme
-                        .headline
+                        .headline5
                         .copyWith(color: Theme.of(context).primaryColor),
                     key: UniqueKey()),
                 IconButton(
@@ -122,7 +123,7 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
                 Text("Change Color",
                     style: Theme.of(context)
                         .textTheme
-                        .headline
+                        .headline5
                         .copyWith(color: Theme.of(context).primaryColor),
                     key: UniqueKey()),
                 IconButton(
@@ -153,7 +154,7 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
                             child: Text('Done',
                                 style: Theme.of(context)
                                     .textTheme
-                                    .body2
+                                    .bodyText2
                                     .copyWith(
                                         color: Theme.of(context).primaryColor)),
                             onPressed: () {
@@ -164,7 +165,7 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
                             child: Text('Default',
                                 style: Theme.of(context)
                                     .textTheme
-                                    .body2
+                                    .bodyText2
                                     .copyWith(
                                         color: Theme.of(context).primaryColor)),
                             onPressed: () {
@@ -183,10 +184,31 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
+                  "Train",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline5
+                      .copyWith(color: Theme.of(context).primaryColor),
+                  key: UniqueKey(),
+                ),
+                IconButton(
+                  onPressed: () {
+                    NaiveBayes.fit();
+                  },
+                  icon: Icon(LineIcons.play_circle),
+                  color: Colors.black,
+                  tooltip: "Train the algorithm",
+                )
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
                   "Task Categories",
                   style: Theme.of(context)
                       .textTheme
-                      .headline
+                      .headline5
                       .copyWith(color: Theme.of(context).primaryColor),
                   key: UniqueKey(),
                 ),

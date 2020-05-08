@@ -26,7 +26,7 @@ class Statistics extends StatelessWidget {
           child: Text("No Data",
               style: Theme.of(context)
                   .textTheme
-                  .headline
+                  .headline5
                   .copyWith(color: Theme.of(context).primaryColor)),
         ),
       ),
@@ -56,7 +56,7 @@ class Statistics extends StatelessWidget {
                     );
                   }),
             ),
-            Text("Today", style: Theme.of(context).textTheme.body2),
+            Text("Today", style: Theme.of(context).textTheme.bodyText2),
             Expanded(
               child: FutureBuilder(
                   future: DBProvider.db
@@ -75,7 +75,7 @@ class Statistics extends StatelessWidget {
                     );
                   }),
             ),
-            Text("Weekly", style: Theme.of(context).textTheme.body2),
+            Text("Weekly", style: Theme.of(context).textTheme.bodyText2),
             Expanded(
               child: FutureBuilder(
                   future: DBProvider.db
@@ -94,7 +94,7 @@ class Statistics extends StatelessWidget {
                     );
                   }),
             ),
-            Text("Monthly", style: Theme.of(context).textTheme.body2),
+            Text("Monthly", style: Theme.of(context).textTheme.bodyText2),
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:io';
 import 'dart:async';
 import 'package:path/path.dart';
@@ -30,11 +31,14 @@ class DBProvider {
     String path = join(documentsDirectory.path, "data.db");
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
+      //* This is the table for the todos
       await db.execute("CREATE TABLE todo ("
           "id TEXT PRIMARY KEY,"
           "content TEXT,"
           "isChecked BIT"
           ")");
+
+      //* This is the table for the plans
       await db.execute("CREATE TABLE plan ("
           "id TEXT PRIMARY KEY,"
           "description TEXT,"
@@ -45,6 +49,28 @@ class DBProvider {
           "isNotification BIT,"
           "isChecked BIT,"
           "bucket TEXT"
+          ")");
+
+      //* This is table for the frequencies of the rating
+      await db.execute("CREATE TABLE bucket ("
+          "bucket TEXT,"
+          "1 INTEGER,"
+          "2 INTEGER,"
+          "3 INTEGER,"
+          "4 INTEGER,"
+          "5 INTEGER,"
+          "total INTEGER"
+          ")");
+
+      //* This is the table for the frequencies of the time
+      await db.execute("CREATE TABLE time ("
+          "time TEXT,"
+          "1 INTEGER,"
+          "2 INTEGER,"
+          "3 INTEGER,"
+          "4 INTEGER,"
+          "5 INTEGER,"
+          "total INTEGER"
           ")");
     });
   }
@@ -107,7 +133,7 @@ class DBProvider {
   }
 
   updatePlan(Map<String, dynamic> plan) async {
-    print(plan.toString());
+    //print(plan.toString());
     final db = await database;
     var res =
         await db.update("plan", plan, where: "id = ?", whereArgs: [plan["id"]]);
@@ -156,6 +182,18 @@ class DBProvider {
     for (int i = 0; i < res.length; i++) {
       result.add(PlanBloc.fromMap(res[i]));
     }
+    updateRatingTable(String bucket, String rating) async {
+      final db = await database;
+      List<Map<String, dynamic>> old = await db.query("rating",
+          where: "bucket = ? AND rating = ?",
+          whereArgs: [bucket, rating.toString()]);
+      old[0][rating.toString()]++;
+      old[0]['total']++;
+      var res = await db.update("rating", old[0],
+          where: "bucket = ? AND rating = ?", whereArgs: [bucket, rating]);
+      return res;
+    }
+
     return (result);
   }
 
@@ -168,17 +206,108 @@ class DBProvider {
     return (sourcePath);
   }
 
-  getMlData(DateTime date) async {
+  //# This is the start of the Machine Learning Methods
+  Future<List<Map<String, dynamic>>> getMlData(DateTime date) async {
     final db = await database;
-    var res = await db.rawQuery(
-        'SELECT rating, fromTime, bucket FROM plan WHERE date(?)',
-        [date.toIso8601String()]);
-    List<PlanBloc> result = [];
+    List<Map<String, dynamic>> res = await db.rawQuery(
+        'SELECT rating, fromTime, bucket FROM plan WHERE date(date) >= date(?)',
+        [toDatabaseDateTimeString(date)]);
+    List<Map<String, dynamic>> result = [];
     for (int i = 0; i < res.length; i++) {
-      result.add(PlanBloc.fromMap(res[i]));
+      if (res[i]['rating'] == 0) continue;
+      //* This gets the hour from the day from the date time
+      res[i]['fromTime'] = res[i]['fromTime'].subString(0, 2);
+      result.add(res[i]);
     }
-    List<PlanBloc> list = res.isNotEmpty ? result : [];
-    return list;
+    return (result);
+  }
+
+  Future<double> getBucketProbabilityFromRating(
+      int rating, String bucket) async {
+    final db = await database;
+    List<Map<String, dynamic>> res =
+        await db.rawQuery('SELECT * FROM bucket WHERE bucket = ?', [bucket]);
+    if (res == null || res.length == 0) return (1 / 5);
+    return ((res[0][rating.toString()] + 1) / (res[0]['total']) + 5);
+  }
+
+  Future<double> getTimeProbabilityFromRating(int rating, String time) async {
+    final db = await database;
+    List<Map<String, dynamic>> res =
+        await db.rawQuery('SELECT * FROM time WHERE time = ?', [time]);
+    if (res == null || res.length == 0) return (1 / 5);
+    return ((res[0][time] + 1) / (res[0]['total'] + 5));
+  }
+
+  Future<double> getPrior(int rating) async {
+    final db = await database;
+    List<Map<String, dynamic>> res = await db.rawQuery(
+        'SELECT SUM(?) as sum_rating, SUM(total) as sum_total FROM time',
+        [rating.toString()]);
+    if (res == null || res.length == 0) return (1 / 5);
+    return ((res[0]['sum_ratin'] + 1) / (res[0]['sum_total'] + 5));
+  }
+
+  // Future<int> getTotalRatingForBucket(String bucket) async {
+  //   final db = await database;
+  //   List<Map<String, dynamic>> res = await db
+  //       .rawQuery('SELECT total FROM rating WHERE bucket = ?', [bucket]);
+  //   if (res[0]['total'] == null) return (0);
+  //   return (res[0]['total']);
+  // }
+
+  // Future<int> getTotalTimeForBucket(String bucket) async {
+  //   final db = await database;
+  //   List<Map<String, dynamic>> res =
+  //       await db.rawQuery('SELECT total FROM time WHERE bucket = ?', [bucket]);
+  //   if (res[0]['total'] == null) return (0);
+  //   return (res[0]['total']);
+  // }
+
+  _insertBucketTable(String bucket) async {
+    final db = await database;
+    await db.insert("bucket",
+        {'bucket': bucket, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, 'total': 0});
+    return (true);
+  }
+
+  _insertTimeTable(String time) async {
+    final db = await database;
+    await db.insert("time",
+        {'time': time, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, 'total': 0});
+    return (true);
+  }
+
+  updateBucketTable(int rating, String bucket) async {
+    final db = await database;
+    List<Map<String, dynamic>> old =
+        await db.query("bucket", where: "bucket = ?", whereArgs: [bucket]);
+
+    if (old == null || old.length == 0) {
+      await _insertBucketTable(bucket);
+      old = await db.query("bucket", where: "bucket = ?", whereArgs: [bucket]);
+    }
+    old[0][rating.toString()]++;
+    old[0]['total']++;
+    var res = await db
+        .update("rating", old[0], where: "bucket = ?", whereArgs: [bucket]);
+    return res;
+  }
+
+  updateTimeTable(int rating, String time) async {
+    final db = await database;
+    List<Map<String, dynamic>> old =
+        await db.query("time", where: "time = ?", whereArgs: [time]);
+
+    if (old == null || old.length == 0) {
+      await _insertTimeTable(time);
+      old = await db.query("time", where: "time = ?", whereArgs: [time]);
+    }
+    old[0][time]++;
+    old[0]['total']++;
+    var res =
+        await db.update("time", old[0], where: "time = ?", whereArgs: [time]);
+    return res;
   }
 
   void dispose() async {

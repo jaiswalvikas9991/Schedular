@@ -5,14 +5,15 @@ ThemeData theme({Color primaryColor = const Color(0xff48c6ef)}) {
 
   TextTheme _textTheme(TextTheme base) {
     return base.copyWith(
-        headline: base.headline.copyWith(
+        headline5: base.headline5.copyWith(
             fontSize: 22, color: Colors.white70, fontFamily: "Schyler"),
-        title: base.title.copyWith(fontSize: 18, color: Colors.white),
-        body1: base.body1.copyWith(
+        headline6: base.headline6.copyWith(fontSize: 18, color: Colors.white),
+        bodyText1: base.bodyText1.copyWith(
             color: Colors.white,
             fontFamily: "Schyler",
             fontWeight: FontWeight.bold),
-        body2: base.body2.copyWith(color: Colors.black, fontFamily: "Schyler"));
+        bodyText2: base.bodyText2
+            .copyWith(color: Colors.black, fontFamily: "Schyler"));
   }
 
   return base.copyWith(

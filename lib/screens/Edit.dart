@@ -101,7 +101,7 @@ class _EditState extends State<Edit> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text("Rating",
-                            style: Theme.of(context).textTheme.body2),
+                            style: Theme.of(context).textTheme.bodyText2),
                         FromStream<int>(
                             stream: widget.planBloc.ratingObservable,
                             initialData: 0,
@@ -144,7 +144,7 @@ class _EditState extends State<Edit> {
       children: <Widget>[
         Text(
           "End   : ",
-          style: Theme.of(context).textTheme.body2.copyWith(fontSize: 18),
+          style: Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 18),
         ),
         FromStream<DateTime>(
             stream: widget.planBloc.toTimeObservable,
@@ -169,7 +169,7 @@ class _EditState extends State<Edit> {
                     Text(DateFormat.jms().format(data),
                         style: Theme.of(context)
                             .textTheme
-                            .body2
+                            .bodyText2
                             .copyWith(fontSize: 18)),
                     SizedBox(width: 10),
                     Icon(
@@ -189,7 +189,7 @@ class _EditState extends State<Edit> {
       children: <Widget>[
         Text(
           "Start : ",
-          style: Theme.of(context).textTheme.body2.copyWith(fontSize: 18),
+          style: Theme.of(context).textTheme.bodyText2.copyWith(fontSize: 18),
         ),
         FromStream<DateTime>(
             stream: widget.planBloc.fromTimeObservable,
@@ -214,7 +214,7 @@ class _EditState extends State<Edit> {
                     Text(DateFormat.jms().format(data),
                         style: Theme.of(context)
                             .textTheme
-                            .body2
+                            .bodyText2
                             .copyWith(fontSize: 18)),
                     SizedBox(width: 10),
                     Icon(LineIcons.pencil,
@@ -240,7 +240,7 @@ class _EditState extends State<Edit> {
                     ? TextField(
                         style: TextStyle(
                             fontFamily:
-                                Theme.of(context).textTheme.body1.fontFamily),
+                                Theme.of(context).textTheme.bodyText1.fontFamily),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         decoration: InputDecoration(
