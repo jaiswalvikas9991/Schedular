@@ -11,7 +11,7 @@ class PlanCard extends StatefulWidget {
   final bool active;
   final String imageUrl;
   final PlanBloc planBloc;
-  final String date;
+  final DateTime date;
   PlanCard(this.planBloc, this.active, this.imageUrl, this.date, {Key key})
       : super(key: key);
 
@@ -20,11 +20,6 @@ class PlanCard extends StatefulWidget {
 }
 
 class _PlanCardState extends State<PlanCard> {
-  String _parseString(String date) {
-    List<String> splitString = date.split('-');
-    return ("${splitString[1]}/${splitString[2]}/${splitString[0]}");
-  }
-
   @override
   Widget build(BuildContext context) {
     final PlanListBloc _planListBloc = Provider.of<PlanListBloc>(context);
@@ -61,8 +56,8 @@ class _PlanCardState extends State<PlanCard> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    Text(DateFormat.yMMMEd().format(DateFormat.yMd('en_US')
-                            .parse(this._parseString(widget.date))) +
+                    Text(
+                      DateFormat.yMMMEd('en_US').format(widget.date) + 
                         "\n" +
                         "Task type : " +
                         widget.planBloc.getBucket()),
@@ -93,8 +88,7 @@ class _PlanCardState extends State<PlanCard> {
                             data == ''
                                 ? "Describe this awsome task to me..."
                                 : data,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.normal),
+                            style: TextStyle(fontWeight: FontWeight.normal),
                           );
                         })),
                 Row(

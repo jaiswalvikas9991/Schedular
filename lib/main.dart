@@ -10,7 +10,6 @@ import 'package:schedular/utils/Provider.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:schedular/screens/Statistics.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:schedular/utils/Constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Flutter notification is a singleton itself.
@@ -23,7 +22,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   TabController _tabController;
-  String _centralDate = dateTimeToString(DateTime.now());
+  //* This is the date that is central to all the pages
+  DateTime _centralDate = DateTime.now();
   FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
 
   PlanListBloc _planListBloc;
@@ -36,10 +36,10 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
     //* Getting the app color
-    SharedPreferences.getInstance().then((SharedPreferences prefs){
-      this.setState((){
+    SharedPreferences.getInstance().then((SharedPreferences prefs) {
+      this.setState(() {
         this._primaryColor = Color(int.parse('0xff' + prefs.get('color')));
-      }); 
+      });
     });
     //* Initializing the bloc
     this._todoListBloc = new TodoListBloc();
@@ -61,8 +61,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
   void _changePrimaryColor(Color color) {
     if (this._primaryColor != color) {
-      SharedPreferences.getInstance().then((SharedPreferences prefs){
-        prefs.setString('color', color.toString().substring(10,16));
+      SharedPreferences.getInstance().then((SharedPreferences prefs) {
+        prefs.setString('color', color.toString().substring(10, 16));
       });
       this.setState(() {
         this._primaryColor = color;
@@ -70,7 +70,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     }
   }
 
-  bool changeCentralDate(String date) {
+  bool changeCentralDate(DateTime date) {
+    // print('chage fired with ' + date.toIso8601String());
     if (this._centralDate != date) {
       this.setState(() {
         this._centralDate = date;

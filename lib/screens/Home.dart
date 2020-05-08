@@ -4,14 +4,14 @@ import 'package:schedular/bloc/TodoListBloc.dart';
 import 'package:schedular/utils/Animate.dart';
 import 'package:schedular/utils/FromStream.dart';
 import 'package:schedular/utils/Provider.dart';
-import 'package:schedular/utils/Constants.dart';
 import 'package:schedular/widgets/Calendar.dart';
 import 'package:schedular/widgets/PlaceHolder.dart';
 import 'package:schedular/widgets/Todo.dart';
 import 'package:schedular/bloc/PlanListBloc.dart';
 
+typedef ChangeDate = bool Function(DateTime time);
 class Home extends StatefulWidget {
-  final Function changeCentralDate;
+  final ChangeDate changeCentralDate;
   Home(this.changeCentralDate, {Key key}) : super(key: key);
 
   @override
@@ -39,10 +39,10 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                 color: Theme.of(context).primaryColor,
                 onDayPressed: (DateTime dateTime) {
                   bool isChanged =
-                      this.widget.changeCentralDate(dateTimeToString(dateTime));
+                      this.widget.changeCentralDate(dateTime);
                   if (isChanged) {
                     _planListBloc.clearALlPlan();
-                    _planListBloc.initialRender(dateTimeToString(dateTime));
+                    _planListBloc.initialRender(dateTime);
                   }
                 }),
             Divider(

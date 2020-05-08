@@ -9,8 +9,7 @@ class PlanListBloc {
   List<PlanBloc> _allPlan = [];
 
   PlanListBloc() {
-    this.initialRender(
-        DateTime.now().toString().substring(0, 11).replaceAll(' ', ''));
+    this.initialRender(DateTime.now());
   }
 
   BehaviorSubject<List<PlanBloc>> _subjectAllPlan =
@@ -18,7 +17,7 @@ class PlanListBloc {
 
   Observable<List<PlanBloc>> get allPlanObservable => _subjectAllPlan.stream;
 
-  void addPlan(String date) {
+  void addPlan(DateTime date) {
     PlanBloc newPlan = new PlanBloc(randomId.v1(), date: date);
     this._allPlan.add(newPlan);
     _subjectAllPlan.sink.add(this._allPlan);
@@ -43,12 +42,9 @@ class PlanListBloc {
     return null;
   }
 
-  void initialRender(String date) {
-    DBProvider.db.getPlanByDate(date).then((value) {
-      this._allPlan = value;
-      if (this._allPlan.length != 0)
-        this._subjectAllPlan.sink.add(this._allPlan);
-    });
+  void initialRender(DateTime date) async {
+    this._allPlan = await DBProvider.db.getPlanByDate(date);
+    if (this._allPlan.length != 0) this._subjectAllPlan.sink.add(this._allPlan);
   }
 
   void clearALlPlan() => this._allPlan.clear();

@@ -12,7 +12,7 @@ class PlanBloc {
   DateTime _fromTime = DateTime.now();
   DateTime _toTime = DateTime.now().add(new Duration(minutes: 45));
   bool _isNotification = false;
-  String _date = dateTimeToString(DateTime.now());
+  DateTime _date = DateTime.now();
   String _bucket = "";
   // bool _isAlarm;
 
@@ -27,13 +27,13 @@ class PlanBloc {
   // BehaviorSubject<bool> _subjectIsAlarm = new   BehaviorSubject<bool>();
 
   PlanBloc(this.id,
-      {isChecked,
-      rating,
-      description,
-      fromTime,
-      toTime,
-      isNotification,
-      date,
+      {bool isChecked,
+      int rating,
+      String description,
+      DateTime fromTime,
+      DateTime toTime,
+      bool isNotification,
+      DateTime date,
       bucket}) {
     this._isChecked = isChecked ?? this._isChecked;
     this._rating = rating ?? this._rating;
@@ -41,7 +41,7 @@ class PlanBloc {
     this._fromTime = fromTime ?? this._fromTime;
     this._toTime = toTime ?? this._toTime;
     this._isNotification = isNotification ?? this._isNotification;
-    this._date = date ?? dateTimeToString(DateTime.now());
+    this._date = date ?? DateTime.now();
     this._bucket = bucket ?? "";
 
     _subjectIsChecked.sink.add(this._isChecked);
@@ -62,7 +62,7 @@ class PlanBloc {
         fromTime: DateTime.parse(planBloc["fromTime"]),
         toTime: DateTime.parse(planBloc["toTime"]),
         isNotification: planBloc["isNotification"] == 1,
-        date: planBloc["date"],
+        date: DateTime.parse(planBloc["date"]),
         bucket: planBloc["bucket"]);
   }
 
@@ -181,11 +181,11 @@ class PlanBloc {
         "id": this.id,
         "description": this._description,
         "rating": this._rating,
-        "fromTime": this._fromTime.toString(),
-        "toTime": this._toTime.toString(),
+        "fromTime": toDatabaseDateTimeString(this._fromTime),
+        "toTime": toDatabaseDateTimeString(this._toTime),
         "isChecked": this._isChecked ? 1 : 0,
         "isNotification": this._isNotification ? 1 : 0,
-        "date": this._date,
+        "date": toDatabaseDateTimeString(this._date),
         "bucket": this._bucket
       };
 

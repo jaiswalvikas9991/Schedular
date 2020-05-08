@@ -6,8 +6,9 @@ import 'package:schedular/widgets/PlaceHolder.dart';
 import 'package:schedular/widgets/PlanCard.dart';
 import 'package:schedular/utils/Provider.dart';
 
+typedef ChangeDate = bool Function(DateTime date);
 class Plan extends StatefulWidget {
-  final String date;
+  final DateTime date;
   Plan(this.date, {Key key}) : super(key: key);
 
   _PlanState createState() => _PlanState();

@@ -5,7 +5,6 @@ import 'package:schedular/bloc/PlanListBloc.dart';
 import 'package:schedular/utils/DBProvider.dart';
 import 'package:schedular/utils/FromStream.dart';
 import 'package:schedular/utils/Provider.dart';
-import 'package:schedular/utils/Constants.dart';
 import 'package:schedular/widgets/DateTimeChart.dart';
 
 class Statistics extends StatelessWidget {
@@ -45,6 +44,7 @@ class Statistics extends StatelessWidget {
             Expanded(
               child: FromStream<List<PlanBloc>>(
                   stream: _planListBloc.allPlanObservable,
+                  initialData: <PlanBloc>[],
                   child: (List<PlanBloc> data) {
                     return Stack(
                       children: <Widget>[
@@ -60,7 +60,7 @@ class Statistics extends StatelessWidget {
             Expanded(
               child: FutureBuilder(
                   future: DBProvider.db
-                      .getPlanWeek(dateTimeToString(DateTime.now())),
+                      .getPlanWeek(new DateTime.now()),
                   builder: (contex, snapshot) {
                     return Stack(
                       children: <Widget>[
@@ -79,7 +79,7 @@ class Statistics extends StatelessWidget {
             Expanded(
               child: FutureBuilder(
                   future: DBProvider.db
-                      .getPlanMonth(dateTimeToString(DateTime.now())),
+                      .getPlanMonth(new DateTime.now()),
                   builder: (contex, snapshot) {
                     return Stack(
                       children: <Widget>[

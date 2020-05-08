@@ -12,8 +12,6 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  // DateTime _currentDate;
-  bool isShrinked = false;
   CalendarController _calendarController = CalendarController();
   @override
   Widget build(BuildContext context) {

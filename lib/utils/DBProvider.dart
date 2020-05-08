@@ -94,18 +94,20 @@ class DBProvider {
     return res;
   }
 
-  getPlanByDate(String date) async {
+  getPlanByDate(DateTime date) async {
     final db = await database;
-    var res = await db.query("plan", where: "date = ?", whereArgs: [date]);
+    var res = await db.rawQuery('SELECT * FROM plan WHERE date(date) = date(?)',
+        [toDatabaseDateTimeString(date)]);
+    print(res.toString());
     List<PlanBloc> result = [];
     for (int i = 0; i < res.length; i++) {
       result.add(PlanBloc.fromMap(res[i]));
     }
-    List<PlanBloc> list = res.isNotEmpty ? result : [];
-    return list;
+    return result;
   }
 
   updatePlan(Map<String, dynamic> plan) async {
+    print(plan.toString());
     final db = await database;
     var res =
         await db.update("plan", plan, where: "id = ?", whereArgs: [plan["id"]]);
@@ -117,42 +119,44 @@ class DBProvider {
     db.delete("plan", where: "id = ?", whereArgs: [id]);
   }
 
-  List<String> _getWeekListFromDate(String date) {
-    List<String> list = new List<String>();
-    for (int i = 0; i <= 7; i++)
-      list.add(dateTimeToString(DateTime.now().subtract(Duration(days: i))));
-      //print(list);
-    return (list);
-  }
+  // List<String> _getWeekListFromDate(String date) {
+  //   List<String> list = new List<String>();
+  //   for (int i = 0; i <= 7; i++)
+  //     list.add(dateTimeToString(DateTime.now().subtract(Duration(days: i))));
+  //   //print(list);
+  //   return (list);
+  // }
 
-  getPlanWeek(String date) async {
+  getPlanWeek(DateTime date) async {
     final db = await database;
-    var res = await db.rawQuery('SELECT * FROM plan WHERE date IN (?, ?, ?, ?, ?, ?, ?, ?)', this._getWeekListFromDate(date));
+    var res = await db.rawQuery(
+        'SELECT * FROM plan WHERE date(date) > date(?, "-7 day")',
+        [toDatabaseDateTimeString(date)]);
     List<PlanBloc> result = [];
     for (int i = 0; i < res.length; i++) {
       result.add(PlanBloc.fromMap(res[i]));
     }
-    List<PlanBloc> list = res.isNotEmpty ? result : [];
     //print("This is result : " + result.toString());
-    return list;
+    return (result);
   }
 
-  List<String> _getMonthListFromDate(String date) {
-    List<String> list = new List<String>();
-    for (int i = 0; i <= 30; i++)
-      list.add(dateTimeToString(DateTime.now().subtract(Duration(days: i))));
-    return (list);
-  }
+  // List<String> _getMonthListFromDate(String date) {
+  //   List<String> list = new List<String>();
+  //   for (int i = 0; i <= 30; i++)
+  //     list.add(dateTimeToString(DateTime.now().subtract(Duration(days: i))));
+  //   return (list);
+  // }
 
-  getPlanMonth(String date) async {
+  getPlanMonth(DateTime date) async {
     final db = await database;
-    var res = await db.rawQuery('SELECT * FROM plan WHERE date IN (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', this._getMonthListFromDate(date));
+    var res = await db.rawQuery(
+        'SELECT * FROM plan WHERE date(date) > date(?, "-30 day")',
+        [toDatabaseDateTimeString(date)]);
     List<PlanBloc> result = [];
     for (int i = 0; i < res.length; i++) {
       result.add(PlanBloc.fromMap(res[i]));
     }
-    List<PlanBloc> list = res.isNotEmpty ? result : [];
-    return list;
+    return (result);
   }
 
   Future<String> copyDb() async {
@@ -162,6 +166,19 @@ class DBProvider {
     db.close();
     _database = null;
     return (sourcePath);
+  }
+
+  getMlData(DateTime date) async {
+    final db = await database;
+    var res = await db.rawQuery(
+        'SELECT rating, fromTime, bucket FROM plan WHERE date(?)',
+        [date.toIso8601String()]);
+    List<PlanBloc> result = [];
+    for (int i = 0; i < res.length; i++) {
+      result.add(PlanBloc.fromMap(res[i]));
+    }
+    List<PlanBloc> list = res.isNotEmpty ? result : [];
+    return list;
   }
 
   void dispose() async {

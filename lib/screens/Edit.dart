@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:schedular/utils/FromStream.dart';
 import 'package:schedular/widgets/Rating.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/cupertino.dart';
 
 class Edit extends StatefulWidget {
   final String imageUrl;
   final PlanBloc planBloc;
-  final String date;
+  final DateTime date;
   Edit(this.imageUrl, this.planBloc, this.date, {Key key}) : super(key: key);
 
   @override
@@ -33,11 +33,6 @@ class _EditState extends State<Edit> {
     SharedPreferences.getInstance().then((SharedPreferences prefs) {
       this._buckets = prefs.getStringList(bucketKey) ?? [];
     });
-  }
-
-  String _parseString(String date) {
-    List<String> splitString = date.split('-');
-    return ("${splitString[1]}/${splitString[2]}/${splitString[0]}");
   }
 
   List<PopupMenuItem<String>> _getPopupMenuItems() {
@@ -87,8 +82,7 @@ class _EditState extends State<Edit> {
                       ],
                     ),
                     Text(
-                      DateFormat.yMMMEd().format(DateFormat.yMd('en_US')
-                          .parse(this._parseString(widget.date))),
+                      DateFormat.yMMMEd('en_US').format(widget.date),
                       style: TextStyle(color: Colors.black),
                     ),
                     SizedBox(
@@ -158,11 +152,17 @@ class _EditState extends State<Edit> {
             child: (DateTime data) {
               return GestureDetector(
                 onTap: () {
-                  DatePicker.showTimePicker(context,
-                      showTitleActions: true,
-                      onChanged: (time) {}, onConfirm: (time) {
-                    widget.planBloc.updateToTime(time);
-                  }, currentTime: DateTime.now(), locale: LocaleType.en);
+                  showCupertinoModalPopup(context: context, builder: (context) => Container(
+                    color: Theme.of(context).primaryColor.withOpacity(0.75),
+                    height: MediaQuery.of(context).size.height / 3,
+                    child: CupertinoDatePicker(
+                      initialDateTime: DateTime.now(),
+                      mode: CupertinoDatePickerMode.time,
+                      onDateTimeChanged: (DateTime time){
+                        if(time != null) widget.planBloc.updateToTime(time);
+                      },
+                    ),
+                  ));
                 },
                 child: Row(
                   children: <Widget>[
@@ -197,11 +197,17 @@ class _EditState extends State<Edit> {
             child: (DateTime data) {
               return GestureDetector(
                 onTap: () {
-                  DatePicker.showTimePicker(context,
-                      showTitleActions: true,
-                      onChanged: (time) {}, onConfirm: (time) {
-                    widget.planBloc.updateFromTime(time);
-                  }, currentTime: DateTime.now(), locale: LocaleType.en);
+                  showCupertinoModalPopup(context: context, builder: (context) => Container(
+                    color: Theme.of(context).primaryColor.withOpacity(0.75),
+                    height: MediaQuery.of(context).size.height / 3,
+                    child: CupertinoDatePicker(
+                      initialDateTime: DateTime.now(),
+                      mode: CupertinoDatePickerMode.time,
+                      onDateTimeChanged: (DateTime time){
+                        if(time != null) widget.planBloc.updateFromTime(time);
+                      },
+                    ),
+                  ));
                 },
                 child: Row(
                   children: <Widget>[
@@ -234,8 +240,7 @@ class _EditState extends State<Edit> {
                     ? TextField(
                         style: TextStyle(
                             fontFamily:
-                                Theme.of(context).textTheme.body1.fontFamily,
-                            fontSize: 32),
+                                Theme.of(context).textTheme.body1.fontFamily),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         decoration: InputDecoration(
@@ -250,7 +255,6 @@ class _EditState extends State<Edit> {
                             : data,
                         style: TextStyle(
                             fontFamily: "Schyler",
-                            fontSize: 35,
                             color: Colors.black),
                       );
               }),
