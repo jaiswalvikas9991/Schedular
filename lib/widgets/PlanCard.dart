@@ -56,10 +56,25 @@ class _PlanCardState extends State<PlanCard> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    Text(DateFormat.yMMMEd('en_US').format(widget.date) +
-                        "\n" +
-                        "Task type : " +
-                        widget.planBloc.getBucket() + '\n' + 'Rating : ' + widget.planBloc.getRatingString(), style: Theme.of(context).textTheme.bodyText1),
+                    FromStream<String>(
+                        stream: widget.planBloc.bucketObservable,
+                        child: (String bucket) {
+                          return FromStream<int>(
+                              stream: widget.planBloc.ratingObservable,
+                              child: (int rating) {
+                                return Text(
+                                    DateFormat.yMMMEd('en_US')
+                                            .format(widget.date) +
+                                        "\n" +
+                                        "Task type : " +
+                                        (bucket == '' ? 'Not Added' : bucket) +
+                                        '\n' +
+                                        'Rating : ' +
+                                        (rating == 0 ? "Not Rated" : rating.toString()),
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1);
+                              });
+                        }),
                     IconButton(
                       icon: Icon(LineIcons.pencil),
                       onPressed: () {

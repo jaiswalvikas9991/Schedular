@@ -123,6 +123,9 @@ abstract class NaiveBayes {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //* This gets the list of the bucket
     final List<String> buckets = prefs.getStringList(bucketKey);
+    //* This is if no bucket is added
+    if(buckets == null || buckets.length == 0) return(null);
+    if(await prefs.get(dateKey) == null) return(null);
     numberOfBuckets = buckets.length;
     Map<String, dynamic> maxMap = {
       'bucket': '',
@@ -148,7 +151,7 @@ abstract class NaiveBayes {
     return (temp[Random().nextInt(temp.length)]);
   }
 
-  static void fit() async {
+  static Future<bool> fit() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String date = await prefs.get(dateKey);
 
@@ -161,10 +164,12 @@ abstract class NaiveBayes {
       date = DateTime.now().toString();
     //* To handel already tarined
     else if (DateFormat('yyyy-MM-dd').format(DateTime.parse(date)) ==
-        DateFormat('yyyy-MM-dd').format(DateTime.now())) return;
+        DateFormat('yyyy-MM-dd').format(DateTime.now())) return(false);
 
     List<Map<String, dynamic>> data =
         await DBProvider.db.getMlData(DateTime.parse(date));
+
+    if(data == null || data.isEmpty) return(false);
 
     //print('This is the data from the ML table' + data.toString());
 
@@ -177,5 +182,6 @@ abstract class NaiveBayes {
 
     await prefs.setString(dateKey, DateTime.now().toString());
     //print('New date updated');
+    return(true);
   }
 }

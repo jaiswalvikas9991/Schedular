@@ -175,8 +175,24 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
                   key: UniqueKey(),
                 ),
                 IconButton(
-                  onPressed: () {
-                    NaiveBayes.fit();
+                  onPressed: () async {
+                    bool outcome = await NaiveBayes.fit();
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0))),
+                            content: Text(
+                                outcome
+                                    ? "Training Completed"
+                                    : "No Data To Train",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    .copyWith(
+                                        color:
+                                            Theme.of(context).primaryColor))));
                   },
                   icon: Icon(LineIcons.play_circle),
                   color: Colors.black,

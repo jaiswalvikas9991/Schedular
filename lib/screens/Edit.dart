@@ -93,7 +93,9 @@ class _EditState extends State<Edit> {
                                     shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10.0))),
-                                    content: Text(prediction['bucket'], style: Theme.of(context).textTheme.bodyText1.copyWith(color : Theme.of(context).primaryColor))));
+                                    content: Text(
+                                      prediction == null ? "No Data For Prediction" :
+                                      prediction['bucket'], style: Theme.of(context).textTheme.bodyText1.copyWith(color : Theme.of(context).primaryColor))));
                           },
                         )
                       ],

@@ -191,6 +191,4 @@ class PlanBloc {
 
   DateTime getFromTime() => this._fromTime;
   int getRating() => this._rating;
-  String getBucket() => this._bucket.isEmpty ? "_" : this._bucket;
-  String getRatingString() => this._rating == 0 ? "Unrated" : this._rating.toString();
 }
