@@ -65,7 +65,7 @@ class _TodoState extends State<Todo> {
                 ? TextField(
                     style: TextStyle(
                         fontFamily:
-                            Theme.of(context).textTheme.body1.fontFamily),
+                            Theme.of(context).textTheme.bodyText1.fontFamily),
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
                     decoration: InputDecoration(
@@ -77,7 +77,7 @@ class _TodoState extends State<Todo> {
                 : colorText(
                   context,
                     text : data == '' ? 'Click on edit...' : data,
-                    style : Theme.of(context).textTheme.body2,
+                    style : Theme.of(context).textTheme.bodyText2,
                   ));
           }),
     );

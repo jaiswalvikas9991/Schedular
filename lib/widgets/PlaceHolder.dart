@@ -11,7 +11,7 @@ class PlaceHolder extends StatelessWidget {
     return Center(
       child: Text(this.data,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.body1.copyWith(
+          style: Theme.of(context).textTheme.bodyText1.copyWith(
               color: Theme.of(context).primaryColor, fontFamily: "Schyler", fontSize: this.fontSize)),
     );
   }

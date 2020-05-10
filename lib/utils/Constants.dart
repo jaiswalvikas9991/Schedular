@@ -5,4 +5,7 @@ String dateTimeToString(DateTime dateTime) =>
 String toDatabaseDateTimeString(DateTime date) =>
     DateFormat("yyyy-MM-dd HH:mm:ss").format(date);
 
+String convert(dynamic value) => "_" + value.toString();
+
 const String bucketKey = 'keys';
+const String dateKey = 'last4';

@@ -56,22 +56,18 @@ class _PlanCardState extends State<PlanCard> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    Text(
-                      DateFormat.yMMMEd('en_US').format(widget.date) + 
+                    Text(DateFormat.yMMMEd('en_US').format(widget.date) +
                         "\n" +
                         "Task type : " +
-                        widget.planBloc.getBucket()),
+                        widget.planBloc.getBucket(), style: Theme.of(context).textTheme.bodyText1),
                     IconButton(
                       icon: Icon(LineIcons.pencil),
                       onPressed: () {
                         Navigator.push(
                             context,
-                            PageRouteBuilder(
-                                transitionDuration: Duration(milliseconds: 500),
-                                pageBuilder: (_, __, ___) => Edit(
-                                    widget.imageUrl,
-                                    widget.planBloc,
-                                    widget.date)));
+                            MaterialPageRoute(
+                                builder: (context) => Edit(widget.imageUrl,
+                                    widget.planBloc, widget.date)));
                       },
                     ),
                   ],
@@ -88,7 +84,7 @@ class _PlanCardState extends State<PlanCard> {
                             data == ''
                                 ? "Describe this awsome task to me..."
                                 : data,
-                            style: TextStyle(fontWeight: FontWeight.normal),
+                            style: Theme.of(context).textTheme.bodyText1,
                           );
                         })),
                 Row(

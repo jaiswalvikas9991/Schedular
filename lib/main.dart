@@ -31,16 +31,22 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
   Color _primaryColor = Color(0xff48c6ef);
 
+  _MyAppState() {
+    //* Getting the app color
+    SharedPreferences.getInstance().then((SharedPreferences prefs) {
+      if(prefs.getString('color') != null) {
+        int color = int.parse('0xff' + prefs.getString('color'));
+        this.setState(() {
+          this._primaryColor = Color(color);
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
-    //* Getting the app color
-    SharedPreferences.getInstance().then((SharedPreferences prefs) {
-      this.setState(() {
-        this._primaryColor = Color(int.parse('0xff' + prefs.get('color')));
-      });
-    });
     //* Initializing the bloc
     this._todoListBloc = new TodoListBloc();
     this._planListBloc = new PlanListBloc();

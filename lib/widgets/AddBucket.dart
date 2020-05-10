@@ -13,7 +13,7 @@ class AddBucket extends StatelessWidget {
       title: Text("Bucket Name",
           style: Theme.of(context)
               .textTheme
-              .headline
+              .headline5
               .copyWith(color: Colors.black)),
       content: TextField(
         controller: this._controller,
@@ -23,7 +23,7 @@ class AddBucket extends StatelessWidget {
             child: Text('Cancel',
                 style: Theme.of(context)
                     .textTheme
-                    .body2
+                    .bodyText2
                     .copyWith(color: Theme.of(context).primaryColor)),
             onPressed: () {
               Navigator.of(context).pop();
@@ -32,7 +32,7 @@ class AddBucket extends StatelessWidget {
             child: Text('Save',
                 style: Theme.of(context)
                     .textTheme
-                    .body2
+                    .bodyText2
                     .copyWith(color: Theme.of(context).primaryColor)),
             onPressed: () {
               Navigator.pop(context, this._controller.text);

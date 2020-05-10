@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:io';
 import 'dart:async';
 import 'package:path/path.dart';
@@ -28,7 +27,7 @@ class DBProvider {
   initDB() async {
     final Directory documentsDirectory =
         await getApplicationDocumentsDirectory();
-    String path = join(documentsDirectory.path, "data.db");
+    String path = join(documentsDirectory.path, "data6.db");
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       //* This is the table for the todos
@@ -54,22 +53,61 @@ class DBProvider {
       //* This is table for the frequencies of the rating
       await db.execute("CREATE TABLE bucket ("
           "bucket TEXT,"
-          "1 INTEGER,"
-          "2 INTEGER,"
-          "3 INTEGER,"
-          "4 INTEGER,"
-          "5 INTEGER,"
+          "rating1 INTEGER,"
+          "rating2 INTEGER,"
+          "rating3 INTEGER,"
+          "rating4 INTEGER,"
+          "rating5 INTEGER,"
           "total INTEGER"
           ")");
 
       //* This is the table for the frequencies of the time
       await db.execute("CREATE TABLE time ("
           "time TEXT,"
-          "1 INTEGER,"
-          "2 INTEGER,"
-          "3 INTEGER,"
-          "4 INTEGER,"
-          "5 INTEGER,"
+          "rating1 INTEGER,"
+          "rating2 INTEGER,"
+          "rating3 INTEGER,"
+          "rating4 INTEGER,"
+          "rating5 INTEGER,"
+          "total INTEGER"
+          ")");
+
+      await db.execute("CREATE TABLE bucketTime ("
+          "bucket TEXT,"
+          "_0 INTEGER,"
+          "_1 INTEGER,"
+          "_2 INTEGER,"
+          "_3 INTEGER,"
+          "_4 INTEGER,"
+          "_5 INTEGER,"
+          "_6 INTEGER,"
+          "_7 INTEGER,"
+          "_8 INTEGER,"
+          "_9 INTEGER,"
+          "_10 INTEGER,"
+          "_11 INTEGER,"
+          "_12 INTEGER,"
+          "_13 INTEGER,"
+          "_14 INTEGER,"
+          "_15 INTEGER,"
+          "_16 INTEGER,"
+          "_17 INTEGER,"
+          "_18 INTEGER,"
+          "_19 INTEGER,"
+          "_20 INTEGER,"
+          "_21 INTEGER,"
+          "_22 INTEGER,"
+          "_23 INTEGER,"
+          "total INTEGER"
+          ")");
+
+      await db.execute("CREATE TABLE ratingTime ("
+          "time TEXT,"
+          "_1 INTEGER,"
+          "_2 INTEGER,"
+          "_3 INTEGER,"
+          "_4 INTEGER,"
+          "_5 INTEGER,"
           "total INTEGER"
           ")");
     });
@@ -145,14 +183,6 @@ class DBProvider {
     db.delete("plan", where: "id = ?", whereArgs: [id]);
   }
 
-  // List<String> _getWeekListFromDate(String date) {
-  //   List<String> list = new List<String>();
-  //   for (int i = 0; i <= 7; i++)
-  //     list.add(dateTimeToString(DateTime.now().subtract(Duration(days: i))));
-  //   //print(list);
-  //   return (list);
-  // }
-
   getPlanWeek(DateTime date) async {
     final db = await database;
     var res = await db.rawQuery(
@@ -166,13 +196,6 @@ class DBProvider {
     return (result);
   }
 
-  // List<String> _getMonthListFromDate(String date) {
-  //   List<String> list = new List<String>();
-  //   for (int i = 0; i <= 30; i++)
-  //     list.add(dateTimeToString(DateTime.now().subtract(Duration(days: i))));
-  //   return (list);
-  // }
-
   getPlanMonth(DateTime date) async {
     final db = await database;
     var res = await db.rawQuery(
@@ -182,18 +205,6 @@ class DBProvider {
     for (int i = 0; i < res.length; i++) {
       result.add(PlanBloc.fromMap(res[i]));
     }
-    updateRatingTable(String bucket, String rating) async {
-      final db = await database;
-      List<Map<String, dynamic>> old = await db.query("rating",
-          where: "bucket = ? AND rating = ?",
-          whereArgs: [bucket, rating.toString()]);
-      old[0][rating.toString()]++;
-      old[0]['total']++;
-      var res = await db.update("rating", old[0],
-          where: "bucket = ? AND rating = ?", whereArgs: [bucket, rating]);
-      return res;
-    }
-
     return (result);
   }
 
@@ -212,13 +223,17 @@ class DBProvider {
     List<Map<String, dynamic>> res = await db.rawQuery(
         'SELECT rating, fromTime, bucket FROM plan WHERE date(date) >= date(?)',
         [toDatabaseDateTimeString(date)]);
+
     List<Map<String, dynamic>> result = [];
-    for (int i = 0; i < res.length; i++) {
-      if (res[i]['rating'] == 0) continue;
-      //* This gets the hour from the day from the date time
-      res[i]['fromTime'] = res[i]['fromTime'].subString(0, 2);
-      result.add(res[i]);
-    }
+    res.forEach((Map<String, dynamic> value) {
+      if (value['rating'] != 0 && value['bucket'] != '') {
+        Map<String, dynamic> map = new Map<String, dynamic>.from(value);
+        map['fromTime'] = map['fromTime'].split(' ')[1].substring(0, 2);
+        map['bucket'] = map['bucket'].toLowerCase();
+        result.add(map);
+      }
+    });
+    //print(result);
     return (result);
   }
 
@@ -228,7 +243,7 @@ class DBProvider {
     List<Map<String, dynamic>> res =
         await db.rawQuery('SELECT * FROM bucket WHERE bucket = ?', [bucket]);
     if (res == null || res.length == 0) return (1 / 5);
-    return ((res[0][rating.toString()] + 1) / (res[0]['total']) + 5);
+    return ((res[0]['rating' + rating.toString()] + 1) / (res[0]['total']) + 5);
   }
 
   Future<double> getTimeProbabilityFromRating(int rating, String time) async {
@@ -236,45 +251,43 @@ class DBProvider {
     List<Map<String, dynamic>> res =
         await db.rawQuery('SELECT * FROM time WHERE time = ?', [time]);
     if (res == null || res.length == 0) return (1 / 5);
-    return ((res[0][time] + 1) / (res[0]['total'] + 5));
+    return ((res[0]['rating' + rating.toString()] + 1) / (res[0]['total'] + 5));
   }
 
   Future<double> getPrior(int rating) async {
     final db = await database;
     List<Map<String, dynamic>> res = await db.rawQuery(
         'SELECT SUM(?) as sum_rating, SUM(total) as sum_total FROM time',
-        [rating.toString()]);
+        ['rating' + rating.toString()]);
     if (res == null || res.length == 0) return (1 / 5);
-    return ((res[0]['sum_ratin'] + 1) / (res[0]['sum_total'] + 5));
+    return ((res[0]['sum_rating'] + 1) / (res[0]['sum_total'] + 5));
   }
-
-  // Future<int> getTotalRatingForBucket(String bucket) async {
-  //   final db = await database;
-  //   List<Map<String, dynamic>> res = await db
-  //       .rawQuery('SELECT total FROM rating WHERE bucket = ?', [bucket]);
-  //   if (res[0]['total'] == null) return (0);
-  //   return (res[0]['total']);
-  // }
-
-  // Future<int> getTotalTimeForBucket(String bucket) async {
-  //   final db = await database;
-  //   List<Map<String, dynamic>> res =
-  //       await db.rawQuery('SELECT total FROM time WHERE bucket = ?', [bucket]);
-  //   if (res[0]['total'] == null) return (0);
-  //   return (res[0]['total']);
-  // }
 
   _insertBucketTable(String bucket) async {
     final db = await database;
-    await db.insert("bucket",
-        {'bucket': bucket, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, 'total': 0});
+    await db.insert("bucket", {
+      'bucket': bucket,
+      'rating1': 0,
+      'rating2': 0,
+      'rating3': 0,
+      'rating4': 0,
+      'rating5': 0,
+      'total': 0
+    });
     return (true);
   }
 
   _insertTimeTable(String time) async {
     final db = await database;
-    await db.insert("time",
-        {'time': time, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, 'total': 0});
+    await db.insert("time", {
+      'time': time,
+      'rating1': 0,
+      'rating2': 0,
+      'rating3': 0,
+      'rating4': 0,
+      'rating5': 0,
+      'total': 0
+    });
     return (true);
   }
 
@@ -283,14 +296,17 @@ class DBProvider {
     List<Map<String, dynamic>> old =
         await db.query("bucket", where: "bucket = ?", whereArgs: [bucket]);
 
+    //* This is called only once in the lifetime
     if (old == null || old.length == 0) {
       await _insertBucketTable(bucket);
       old = await db.query("bucket", where: "bucket = ?", whereArgs: [bucket]);
     }
-    old[0][rating.toString()]++;
-    old[0]['total']++;
+
+    Map<String, dynamic> map = new Map<String, dynamic>.from(old[0]);
+    map['rating' + rating.toString()]++;
+    map['total']++;
     var res = await db
-        .update("rating", old[0], where: "bucket = ?", whereArgs: [bucket]);
+        .update("bucket", map, where: "bucket = ?", whereArgs: [bucket]);
     return res;
   }
 
@@ -303,11 +319,128 @@ class DBProvider {
       await _insertTimeTable(time);
       old = await db.query("time", where: "time = ?", whereArgs: [time]);
     }
-    old[0][time]++;
-    old[0]['total']++;
+    Map<String, dynamic> map = new Map<String, dynamic>.from(old[0]);
+    map['rating' + rating.toString()]++;
+    map['total']++;
     var res =
-        await db.update("time", old[0], where: "time = ?", whereArgs: [time]);
+        await db.update("time", map, where: "time = ?", whereArgs: [time]);
     return res;
+  }
+
+  Future<void> checkData(String table) async {
+    final db = await database;
+    print(await db.rawQuery('SELECT * FROM ?', [table]));
+  }
+
+  //# This is the start of the methods for the time based Naive Bayes
+  //* This is the probability of seeing a time - P(time = 9)
+  Future<double> getTimeProb(String time) async {
+    final db = await database;
+    List<Map<String, dynamic>> res = await db.rawQuery(
+        'SELECT SUM(?) as num, SUM(total) as den FROM bucketTime',
+        [convert(time)]);
+    if (res == null || res.isEmpty) return (0.0);
+    return ((res[0]['num'] + 1.0) / (res[0]['den'] + 24.0));
+  }
+
+  //* P(bucket = 'coding' | time = 9)
+  Future<double> getBucketTimeProb(String bucket, String time) async {
+    final db = await database;
+    List<Map<String, dynamic>> res = await db.rawQuery(
+        'SELECT ? as num, SUM(?) as den FROM bucketTime WHERE bucket = ?',
+        [convert(time), convert(time), bucket]);
+    if (res == null || res.isEmpty) return (0.0);
+    return ((res[0]['num'] + 1.0) / (res[0]['den'] + 24.0));
+  }
+
+  //* P(rating = 5 | time = 9)
+  Future<double> getRatingTimeProb(int rating, String time) async {
+    final db = await database;
+    List<Map<String, dynamic>> res = await db
+        .rawQuery('SELECT * FROM ratingTime WHERE time = ?', [convert(time)]);
+    if (res == null || res.isEmpty) return (0.0);
+    double nume = res[0][convert(rating)];
+    double deno = res[0][convert(1)] +
+        res[0][convert(2)] +
+        res[0][convert(3)] +
+        res[0][convert(4)] +
+        res[0][convert(5)];
+    return ((nume + 1) / (deno + 24));
+  }
+
+  Future<bool> updateRatingTime(int rating, String time) async {
+    final db = await database;
+    List<Map<String, dynamic>> old = await db
+        .rawQuery('SELECT * FROM ratingTime WHERE time = ?', [convert(time)]);
+    if (old == null || old.isEmpty)
+      return (await _insertRatingTime(rating, time));
+    Map<String, dynamic> map = Map.from(old[0]);
+    map[convert(rating)]++;
+    await db.update('ratingTime', map);
+    return (true);
+  }
+
+  Future<bool> updateBucketTime(String bucket, String time) async {
+    final db = await database;
+    List<Map<String, dynamic>> old = await db
+        .rawQuery('SELECT * FROM bucketTime WHERE bucket = ?', [bucket]);
+    if (old == null || old.isEmpty)
+      return (await _insertBucketTime(bucket, time));
+    Map<String, dynamic> map = Map.from(old[0]);
+    map[convert(time)]++;
+    await db.update('bucketTime', map);
+    return (true);
+  }
+
+  Future<bool> _insertRatingTime(int rating, String time) async {
+    final db = await database;
+    Map<String, dynamic> map = {
+      'time': convert(time),
+      convert(1): 0,
+      convert(2): 0,
+      convert(3): 0,
+      convert(4): 0,
+      convert(5): 0,
+      'total': 1
+    };
+    map[convert(rating)] = 1;
+    await db.insert('ratingTime', map);
+    return (true);
+  }
+
+  Future<bool> _insertBucketTime(String bucket, String time) async {
+    final db = await database;
+    Map<String, dynamic> map = {
+      'bucket': bucket,
+      convert(0): 0,
+      convert(1): 0,
+      convert(2): 0,
+      convert(3): 0,
+      convert(4): 0,
+      convert(5): 0,
+      convert(6): 0,
+      convert(7): 0,
+      convert(8): 0,
+      convert(9): 0,
+      convert(10): 0,
+      convert(11): 0,
+      convert(12): 0,
+      convert(13): 0,
+      convert(14): 0,
+      convert(15): 0,
+      convert(16): 0,
+      convert(17): 0,
+      convert(18): 0,
+      convert(19): 0,
+      convert(20): 0,
+      convert(21): 0,
+      convert(22): 0,
+      convert(23): 0,
+      'total': 1
+    };
+    map[convert(time)] = 1;
+    await db.insert('bucketTime', map);
+    return (true);
   }
 
   void dispose() async {

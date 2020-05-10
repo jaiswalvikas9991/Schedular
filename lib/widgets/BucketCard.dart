@@ -20,7 +20,7 @@ class BucketCard extends StatelessWidget {
           Text(bucket,
               style: Theme.of(context)
                   .textTheme
-                  .headline
+                  .headline5
                   .copyWith(color: Colors.black)),
           Spacer(),
           IconButton(

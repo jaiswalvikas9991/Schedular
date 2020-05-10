@@ -205,6 +205,28 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
+                  "Predict",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline5
+                      .copyWith(color: Theme.of(context).primaryColor),
+                  key: UniqueKey(),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    var value = await NaiveBayes.predict(DateTime.now().add(Duration(hours: 2)));
+                    print(value.toString());
+                  },
+                  icon: Icon(LineIcons.play_circle),
+                  color: Colors.black,
+                  tooltip: "Predict",
+                )
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
                   "Task Categories",
                   style: Theme.of(context)
                       .textTheme

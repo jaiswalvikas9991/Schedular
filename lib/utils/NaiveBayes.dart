@@ -1,80 +1,164 @@
+import 'package:intl/intl.dart';
 import 'package:schedular/utils/Constants.dart';
 import 'package:schedular/utils/DBProvider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+//* This is non inheritable non instantiable class (aka. Singleton)
 abstract class NaiveBayes {
   static int alpha = 1;
   static int numberOfBuckets;
   NaiveBayes._();
-  static void loadModel() {}
+
+  // static Future<double> probabilityWithRating(
+  //     DateTime time, String bucket, int rating) async {
+  //   double prior = await DBProvider.db.getPrior(rating);
+  //   double likelyhoodBucket =
+  //       await DBProvider.db.getBucketProbabilityFromRating(rating, bucket);
+  //   double likelyhoodTime = await DBProvider.db.getTimeProbabilityFromRating(
+  //       rating, time.toString().split(' ')[1].substring(0, 2));
+  //   return (prior * likelyhoodBucket * likelyhoodTime);
+  // }
+
+  // static Future<Map<String, dynamic>> probability(
+  //     DateTime time, String bucket) async {
+  //   Map<String, dynamic> maxMap = {
+  //     'probability': -1,
+  //     'bucket': '',
+  //     'rating': -1
+  //   };
+  //   //* We are calculating the probability for every rating
+  //   for (int i = 1; i <= 5; i++) {
+  //     double prob = await probabilityWithRating(time, bucket, i);
+  //     if (prob * i > maxMap['probability'])
+  //       maxMap = {'probability': prob * i, 'bucket': bucket, 'rating': i};
+  //   }
+  //   return (maxMap);
+  // }
+
+  // static Future<Map<String, dynamic>> predict(DateTime time) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   //* This gets the list of the bucket
+  //   final List<String> buckets = prefs.getStringList(bucketKey);
+  //   numberOfBuckets = buckets.length;
+  //   Map<String, dynamic> maxMap = {
+  //     'probability': -1,
+  //     'bucket': '',
+  //     'rating': -1
+  //   };
+  //   //# We will check every bucket with every rating and then we will take the frequency weighted average to determine the final value of the probaility
+  //   //# And we will declare that bucket as the anser which will have the higest weighted probability
+  //   for (int i = 0; i < buckets.length; i++) {
+  //     //# Here we are calculating the probability of each rating
+  //     Map<String, dynamic> map = await probability(time, buckets[i]);
+  //     if (map['probability'] > maxMap['probability']) maxMap = map;
+  //   }
+  //   maxMap['time'] = time;
+  //   return (maxMap);
+  // }
+
+  //* This functions updates the frequency tables of bucket and time
+  // static void fit() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String date = await prefs.get(dateKey);
+
+  //   print("This is the fetched data :");
+  //   await DBProvider.db.checkData('ratingTime');
+
+  //   print(date);
+  //   //* This takes care of the very first train
+  //   if (date == null)
+  //     date = DateTime.now().toString();
+  //   //* To handel already tarined
+  //   else if (DateFormat('yyyy-MM-dd').format(DateTime.parse(date)) ==
+  //       DateFormat('yyyy-MM-dd').format(DateTime.now())) return;
+
+  //   List<Map<String, dynamic>> data =
+  //       await DBProvider.db.getMlData(DateTime.parse(date));
+
+  //   print('This is the data from the ML table' + data.toString());
+
+  //   //print("This is the featched data : \n" + data.toString());
+
+  //   data.forEach((Map<String, dynamic> value) async {
+  //     await DBProvider.db.updateBucketTable(value['rating'], value['bucket']);
+  //     await DBProvider.db.updateTimeTable(value['rating'], value['fromTime']);
+  //   });
+  //   await prefs.setString(dateKey, DateTime.now().toString());
+  // }
 
   static Future<double> probabilityWithRating(
-      DateTime time, String bucket, int rating) async {
-    double prior = await DBProvider.db.getPrior(rating);
+      DateTime dateTime, String bucket, int rating) async {
+    String time = dateTime.toString().split(' ')[1].substring(0, 2);
+    double prior = await DBProvider.db.getTimeProb(time);
     double likelyhoodBucket =
-        await DBProvider.db.getBucketProbabilityFromRating(rating, bucket);
-    double likelyhoodTime = await DBProvider.db
-        .getTimeProbabilityFromRating(rating, time.toString().substring(0, 2));
-    return (prior * likelyhoodBucket * likelyhoodTime);
+        await DBProvider.db.getBucketTimeProb(bucket, time);
+    double likelyhoodRating =
+        await DBProvider.db.getRatingTimeProb(rating, time);
+    return (prior * likelyhoodBucket * likelyhoodRating);
   }
 
-  static Future<Map<String, dynamic>> probability(
-      DateTime time, String bucket) async {
-    Map<String, dynamic> maxMap = {
-      'probability': -1,
-      'bucket': '',
-      'rating': -1
-    };
+  static Future<double> probability(DateTime dateTime, String bucket) async {
+    double weightedSum = 0.0;
     //* We are calculating the probability for every rating
-    for (int i = 1; i <= 5; i++) {
-      double prob = await probabilityWithRating(time, bucket, i);
-      if (prob * i > maxMap['probability'])
-        maxMap = {'probability': prob * i, 'bucket': bucket, 'rating': i};
-    }
-    return (maxMap);
+    weightedSum =
+        weightedSum - 3.0 * await probabilityWithRating(dateTime, bucket, 1);
+    weightedSum =
+        weightedSum - 2.0 * await probabilityWithRating(dateTime, bucket, 2);
+    weightedSum =
+        weightedSum - 1.0 * await probabilityWithRating(dateTime, bucket, 3);
+    weightedSum =
+        weightedSum + 2.0 * await probabilityWithRating(dateTime, bucket, 4);
+    weightedSum =
+        weightedSum + 3.0 * await probabilityWithRating(dateTime, bucket, 5);
+    return (weightedSum);
   }
 
   static Future<Map<String, dynamic>> predict(DateTime time) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    //* This is the smoothing term
-    alpha = 1;
     //* This gets the list of the bucket
     final List<String> buckets = prefs.getStringList(bucketKey);
     numberOfBuckets = buckets.length;
     Map<String, dynamic> maxMap = {
-      'probability': -1,
       'bucket': '',
-      'rating': -1
+      'probability': double.negativeInfinity,
+      'time': time.toString()
     };
     //# We will check every bucket with every rating and then we will take the frequency weighted average to determine the final value of the probaility
     //# And we will declare that bucket as the anser which will have the higest weighted probability
-    buckets.forEach((String bucket) async {
+    for (int i = 0; i < buckets.length; i++) {
       //# Here we are calculating the probability of each rating
-      Map<String, dynamic> map = await probability(time, bucket);
-      if (map['probability'] > maxMap['probability']) maxMap = map;
-    });
+      double prob = await probability(time, buckets[i]);
+      if (prob < maxMap['probability']) continue;
+      maxMap['probability'] = prob;
+      maxMap['bucket'] = buckets[i];
+    }
     return (maxMap);
   }
 
-  //* This functions updates the frequency tables of bucket and time
   static void fit() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String date = await prefs.get('lastTrainDate');
+    String date = await prefs.get(dateKey);
 
+    print("This is the fetched data :");
+    await DBProvider.db.checkData('ratingTime');
+
+    print(date);
     //* This takes care of the very first train
     if (date == null)
       date = DateTime.now().toString();
     //* To handel already tarined
-    else if (DateTime.parse(date) == DateTime.now()) return;
+    else if (DateFormat('yyyy-MM-dd').format(DateTime.parse(date)) ==
+        DateFormat('yyyy-MM-dd').format(DateTime.now())) return;
 
     List<Map<String, dynamic>> data =
         await DBProvider.db.getMlData(DateTime.parse(date));
 
+    print('This is the data from the ML table' + data.toString());
+
     data.forEach((Map<String, dynamic> value) async {
-      await DBProvider.db.updateBucketTable(value['rating'], value['bucket']);
-      await DBProvider.db.updateTimeTable(value['rating'], value['fromTime']);
+      await DBProvider.db.updateRatingTime(value['rating'], value['fromTime']);
+      await DBProvider.db.updateBucketTime(value['bucket'], value['fromTime']);
     });
-    await prefs.setString('lastTrainDate', DateTime.now().toString());
+    await prefs.setString(dateKey, DateTime.now().toString());
   }
 }
