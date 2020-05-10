@@ -3,6 +3,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
 import 'package:intl/intl.dart';
 import 'package:schedular/utils/FromStream.dart';
+import 'package:schedular/utils/NaiveBayes.dart';
 import 'package:schedular/widgets/Rating.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
@@ -78,6 +79,22 @@ class _EditState extends State<Edit> {
                           onSelected: (String bucket) {
                             widget.planBloc.updateBucketState(bucket);
                           },
+                        ),
+                        IconButton(
+                          icon: Icon(LineIcons.search,
+                              color: Theme.of(context).primaryColor),
+                          onPressed: () async {
+                            Map<String, dynamic> prediction =
+                                await NaiveBayes.predict(
+                                    widget.planBloc.getFromTime());
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.0))),
+                                    content: Text(prediction['bucket'], style: Theme.of(context).textTheme.bodyText1.copyWith(color : Theme.of(context).primaryColor))));
+                          },
                         )
                       ],
                     ),
@@ -152,17 +169,22 @@ class _EditState extends State<Edit> {
             child: (DateTime data) {
               return GestureDetector(
                 onTap: () {
-                  showCupertinoModalPopup(context: context, builder: (context) => Container(
-                    color: Theme.of(context).primaryColor.withOpacity(0.75),
-                    height: MediaQuery.of(context).size.height / 3,
-                    child: CupertinoDatePicker(
-                      initialDateTime: DateTime.now(),
-                      mode: CupertinoDatePickerMode.time,
-                      onDateTimeChanged: (DateTime time){
-                        if(time != null) widget.planBloc.updateToTime(time);
-                      },
-                    ),
-                  ));
+                  showCupertinoModalPopup(
+                      context: context,
+                      builder: (context) => Container(
+                            color: Theme.of(context)
+                                .primaryColor
+                                .withOpacity(0.75),
+                            height: MediaQuery.of(context).size.height / 3,
+                            child: CupertinoDatePicker(
+                              initialDateTime: DateTime.now(),
+                              mode: CupertinoDatePickerMode.time,
+                              onDateTimeChanged: (DateTime time) {
+                                if (time != null)
+                                  widget.planBloc.updateToTime(time);
+                              },
+                            ),
+                          ));
                 },
                 child: Row(
                   children: <Widget>[
@@ -197,17 +219,22 @@ class _EditState extends State<Edit> {
             child: (DateTime data) {
               return GestureDetector(
                 onTap: () {
-                  showCupertinoModalPopup(context: context, builder: (context) => Container(
-                    color: Theme.of(context).primaryColor.withOpacity(0.75),
-                    height: MediaQuery.of(context).size.height / 3,
-                    child: CupertinoDatePicker(
-                      initialDateTime: DateTime.now(),
-                      mode: CupertinoDatePickerMode.time,
-                      onDateTimeChanged: (DateTime time){
-                        if(time != null) widget.planBloc.updateFromTime(time);
-                      },
-                    ),
-                  ));
+                  showCupertinoModalPopup(
+                      context: context,
+                      builder: (context) => Container(
+                            color: Theme.of(context)
+                                .primaryColor
+                                .withOpacity(0.75),
+                            height: MediaQuery.of(context).size.height / 3,
+                            child: CupertinoDatePicker(
+                              initialDateTime: DateTime.now(),
+                              mode: CupertinoDatePickerMode.time,
+                              onDateTimeChanged: (DateTime time) {
+                                if (time != null)
+                                  widget.planBloc.updateFromTime(time);
+                              },
+                            ),
+                          ));
                 },
                 child: Row(
                   children: <Widget>[
@@ -239,8 +266,10 @@ class _EditState extends State<Edit> {
                 return this._isBeingEdited
                     ? TextField(
                         style: TextStyle(
-                            fontFamily:
-                                Theme.of(context).textTheme.bodyText1.fontFamily),
+                            fontFamily: Theme.of(context)
+                                .textTheme
+                                .bodyText1
+                                .fontFamily),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         decoration: InputDecoration(
@@ -251,11 +280,10 @@ class _EditState extends State<Edit> {
                       )
                     : Text(
                         data == ''
-                            ? "Describe this awsome task to me......"
+                            ? "Describe this awesome task to me......"
                             : data,
                         style: TextStyle(
-                            fontFamily: "Schyler",
-                            color: Colors.black),
+                            fontFamily: "Schyler", color: Colors.black),
                       );
               }),
         ),

@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'dart:async';
+import 'dart:math';
 import 'package:path/path.dart';
 import 'package:schedular/bloc/PlanBloc.dart';
 import 'package:schedular/bloc/TodoBloc.dart';
 import 'package:schedular/utils/Constants.dart';
+import 'package:schedular/utils/NaiveBayes.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -162,7 +164,7 @@ class DBProvider {
     final db = await database;
     var res = await db.rawQuery('SELECT * FROM plan WHERE date(date) = date(?)',
         [toDatabaseDateTimeString(date)]);
-    print(res.toString());
+    //print(res.toString());
     List<PlanBloc> result = [];
     for (int i = 0; i < res.length; i++) {
       result.add(PlanBloc.fromMap(res[i]));
@@ -339,7 +341,8 @@ class DBProvider {
     List<Map<String, dynamic>> res = await db.rawQuery(
         'SELECT SUM(${convert(time)}) as num, SUM(total) as den FROM bucketTime');
     if (res == null || res.isEmpty) return (0.0);
-    return ((res[0]['num'] + 1.0) / (res[0]['den'] + 24.0));
+    //print('This is the prior $res');
+    return (log((res[0]['num'] + 1.0) / (res[0]['den'] + 24.0)));
   }
 
   //* P(bucket = 'coding' | time = 9)
@@ -353,7 +356,8 @@ class DBProvider {
         .rawQuery('SELECT SUM(?) as deno FROM bucketTime', [convert(time)]);
     if (nume == null || nume.isEmpty || deno == null || deno.isEmpty)
       return (0.0);
-    return ((nume[0]['nume'] + 1.0) / (deno[0]['deno'] + 24.0));
+    //print('This bucket liklyhood $nume $deno');
+    return (log((nume[0]['nume'] + 1.0) / (deno[0]['deno'] + NaiveBayes.numberOfBuckets)));
   }
 
   //* P(rating = 5 | time = 9)
@@ -368,7 +372,8 @@ class DBProvider {
         res[0][convert(3)] +
         res[0][convert(4)] +
         res[0][convert(5)];
-    return ((nume + 1.0) / (deno + 24.0));
+    //print('This is the rating liklyhood $nume $deno');
+    return (log((nume + 1.0) / (deno + 5.0)));
   }
 
   Future<bool> updateRatingTime(int rating, String time) async {

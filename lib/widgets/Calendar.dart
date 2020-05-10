@@ -47,7 +47,7 @@ class _CalendarState extends State<Calendar> {
               color: Colors.transparent,
             )),
         onDaySelected: (DateTime date, _) => widget.onDayPressed(date),
-        onUnavailableDaySelected: () => debugPrint("Go to next month"),
+        //onUnavailableDaySelected: () => debugPrint("Go to next month"),
       ),
     );
   }

@@ -76,21 +76,21 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
     });
   }
 
-  void _copyDb() async {
-    //* Source file
-    String sourcePath = await DBProvider.db.copyDb();
-    //debugPrint("Data copied form : " + sourcePath);
-    File sourceFile = File(sourcePath);
-    List content = await sourceFile.readAsBytes();
+  // void _copyDb() async {
+  //   //* Source file
+  //   String sourcePath = await DBProvider.db.copyDb();
+  //   //debugPrint("Data copied form : " + sourcePath);
+  //   File sourceFile = File(sourcePath);
+  //   List content = await sourceFile.readAsBytes();
 
-    //* target file
-    final targetDir = await getExternalStorageDirectory();
-    final targetPath = join(targetDir.path,
-        DateFormat("dd-MM-yyyy").format(DateTime.now()) + '.db');
-    //debugPrint("Data Copied to : " + targetPath);
-    File targetFile = File(targetPath);
-    await targetFile.writeAsBytes(content, flush: true);
-  }
+  //   //* target file
+  //   final targetDir = await getExternalStorageDirectory();
+  //   final targetPath = join(targetDir.path,
+  //       DateFormat("dd-MM-yyyy").format(DateTime.now()) + '.db');
+  //   //debugPrint("Data Copied to : " + targetPath);
+  //   File targetFile = File(targetPath);
+  //   await targetFile.writeAsBytes(content, flush: true);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -100,23 +100,6 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
         padding: const EdgeInsets.all(15.0),
         child: Column(
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text("Save Data",
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline5
-                        .copyWith(color: Theme.of(context).primaryColor),
-                    key: UniqueKey()),
-                IconButton(
-                  onPressed: this._copyDb,
-                  icon: Icon(LineIcons.upload),
-                  color: Colors.black,
-                  tooltip: "Save data to Memory",
-                )
-              ],
-            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -198,28 +181,6 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
                   icon: Icon(LineIcons.play_circle),
                   color: Colors.black,
                   tooltip: "Train the algorithm",
-                )
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  "Predict",
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline5
-                      .copyWith(color: Theme.of(context).primaryColor),
-                  key: UniqueKey(),
-                ),
-                IconButton(
-                  onPressed: () async {
-                    var value = await NaiveBayes.predict(DateTime.now().add(Duration(hours: 3)));
-                    print(value.toString());
-                  },
-                  icon: Icon(LineIcons.play_circle),
-                  color: Colors.black,
-                  tooltip: "Predict",
                 )
               ],
             ),
