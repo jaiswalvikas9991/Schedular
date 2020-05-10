@@ -59,7 +59,7 @@ class _PlanCardState extends State<PlanCard> {
                     Text(DateFormat.yMMMEd('en_US').format(widget.date) +
                         "\n" +
                         "Task type : " +
-                        widget.planBloc.getBucket(), style: Theme.of(context).textTheme.bodyText1),
+                        widget.planBloc.getBucket() + '\n' + 'Rating : ' + widget.planBloc.getRatingString(), style: Theme.of(context).textTheme.bodyText1),
                     IconButton(
                       icon: Icon(LineIcons.pencil),
                       onPressed: () {

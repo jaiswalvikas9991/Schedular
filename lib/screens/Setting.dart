@@ -214,7 +214,7 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
                 ),
                 IconButton(
                   onPressed: () async {
-                    var value = await NaiveBayes.predict(DateTime.now().add(Duration(hours: 2)));
+                    var value = await NaiveBayes.predict(DateTime.now().add(Duration(hours: 3)));
                     print(value.toString());
                   },
                   icon: Icon(LineIcons.play_circle),

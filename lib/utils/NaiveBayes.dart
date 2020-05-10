@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:intl/intl.dart';
 import 'package:schedular/utils/Constants.dart';
 import 'package:schedular/utils/DBProvider.dart';
@@ -94,26 +95,23 @@ abstract class NaiveBayes {
         await DBProvider.db.getBucketTimeProb(bucket, time);
     double likelyhoodRating =
         await DBProvider.db.getRatingTimeProb(rating, time);
-    return (prior * likelyhoodBucket * likelyhoodRating);
+    return (log(prior) * log(likelyhoodBucket) * log(likelyhoodRating));
   }
 
   static Future<double> probability(DateTime dateTime, String bucket) async {
-    double weightedSum = 0.0;
     //* We are calculating the probability for every rating
-    weightedSum =
-        weightedSum - 3.0 * await probabilityWithRating(dateTime, bucket, 1);
-    weightedSum =
-        weightedSum - 2.0 * await probabilityWithRating(dateTime, bucket, 2);
-    weightedSum =
-        weightedSum - 1.0 * await probabilityWithRating(dateTime, bucket, 3);
-    weightedSum =
-        weightedSum + 2.0 * await probabilityWithRating(dateTime, bucket, 4);
-    weightedSum =
-        weightedSum + 3.0 * await probabilityWithRating(dateTime, bucket, 5);
-    return (weightedSum);
+    double rating1 = await probabilityWithRating(dateTime, bucket, 1);
+    double rating2 = await probabilityWithRating(dateTime, bucket, 2);
+    double rating3 = await probabilityWithRating(dateTime, bucket, 3);
+    double rating4 = await probabilityWithRating(dateTime, bucket, 4);
+    double rating5 = await probabilityWithRating(dateTime, bucket, 5);
+    double finalProbability = rating1 * 0.0 + rating2 * 0.0 + rating3 * 1.0 + rating4 * 2.0 + rating5 * 3.0;
+    return (finalProbability);
   }
 
   static Future<Map<String, dynamic>> predict(DateTime time) async {
+    await DBProvider.db.checkData('bucketTime');
+    await DBProvider.db.checkData('ratingTime');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //* This gets the list of the bucket
     final List<String> buckets = prefs.getStringList(bucketKey);
@@ -155,10 +153,14 @@ abstract class NaiveBayes {
 
     print('This is the data from the ML table' + data.toString());
 
-    data.forEach((Map<String, dynamic> value) async {
-      await DBProvider.db.updateRatingTime(value['rating'], value['fromTime']);
-      await DBProvider.db.updateBucketTime(value['bucket'], value['fromTime']);
-    });
+    for (int i = 0; i < data.length; i++) {
+      await DBProvider.db
+          .updateRatingTime(data[i]['rating'], data[i]['fromTime']);
+      await DBProvider.db
+          .updateBucketTime(data[i]['bucket'], data[i]['fromTime']);
+    }
+
     await prefs.setString(dateKey, DateTime.now().toString());
+    print('New date updated');
   }
 }

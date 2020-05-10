@@ -8,4 +8,5 @@ String toDatabaseDateTimeString(DateTime date) =>
 String convert(dynamic value) => "_" + value.toString();
 
 const String bucketKey = 'keys';
-const String dateKey = 'last4';
+const String dateKey = 'last10';
+const databaseName = 'data10';
