@@ -74,8 +74,25 @@ class _EditState extends State<Edit> {
                         PopupMenuButton(
                           icon: Icon(LineIcons.list,
                               color: Theme.of(context).primaryColor),
-                          itemBuilder: (BuildContext context) =>
-                              this._getPopupMenuItems(),
+                          itemBuilder: (BuildContext context) {
+                            if (this._buckets.length == 0) {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10.0))),
+                                          content: Text("No Task Type Added",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyText1
+                                                  .copyWith(
+                                                      color: Theme.of(context)
+                                                          .primaryColor))));
+                            }
+                            return this._getPopupMenuItems();
+                          },
                           onSelected: (String bucket) {
                             widget.planBloc.updateBucketState(bucket);
                           },
@@ -94,8 +111,15 @@ class _EditState extends State<Edit> {
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10.0))),
                                     content: Text(
-                                      prediction == null ? "No Data For Prediction" :
-                                      prediction['bucket'], style: Theme.of(context).textTheme.bodyText1.copyWith(color : Theme.of(context).primaryColor))));
+                                        prediction == null
+                                            ? "No Data For Prediction"
+                                            : prediction['bucket'],
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1
+                                            .copyWith(
+                                                color: Theme.of(context)
+                                                    .primaryColor))));
                           },
                         )
                       ],
@@ -174,9 +198,7 @@ class _EditState extends State<Edit> {
                   showCupertinoModalPopup(
                       context: context,
                       builder: (context) => Container(
-                            color: Theme.of(context)
-                                .primaryColor
-                                .withOpacity(0.75),
+                            color: Colors.white,
                             height: MediaQuery.of(context).size.height / 3,
                             child: CupertinoDatePicker(
                               initialDateTime: DateTime.now(),
@@ -224,9 +246,7 @@ class _EditState extends State<Edit> {
                   showCupertinoModalPopup(
                       context: context,
                       builder: (context) => Container(
-                            color: Theme.of(context)
-                                .primaryColor
-                                .withOpacity(0.75),
+                            color: Colors.white,
                             height: MediaQuery.of(context).size.height / 3,
                             child: CupertinoDatePicker(
                               initialDateTime: DateTime.now(),

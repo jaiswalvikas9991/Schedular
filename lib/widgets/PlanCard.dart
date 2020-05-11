@@ -93,11 +93,11 @@ class _PlanCardState extends State<PlanCard> {
                 Expanded(
                     child: FromStream<String>(
                         stream: widget.planBloc.descriptionObservable,
-                        initialData: "Describe this awsome task to me...",
+                        initialData: "Describe this awesome task to me...",
                         child: (String data) {
                           return Text(
                             data == ''
-                                ? "Describe this awsome task to me..."
+                                ? "Describe this awesome task to me..."
                                 : data,
                             style: Theme.of(context).textTheme.bodyText1,
                           );
