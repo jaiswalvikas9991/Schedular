@@ -26,7 +26,7 @@ class Statistics extends StatelessWidget {
           child: Text("No Data",
               style: Theme.of(context)
                   .textTheme
-                  .headline5
+                  .bodyText1
                   .copyWith(color: Theme.of(context).primaryColor)),
         ),
       ),

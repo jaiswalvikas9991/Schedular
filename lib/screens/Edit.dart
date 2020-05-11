@@ -113,7 +113,7 @@ class _EditState extends State<Edit> {
                                     content: Text(
                                         prediction == null
                                             ? "No Data For Prediction"
-                                            : prediction['bucket'],
+                                            : "The best task types is : " + prediction['bucket'],
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1
