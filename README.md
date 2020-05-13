@@ -1,5 +1,7 @@
-# schedular
+# Schedular
 A smart timetable management application.
+
+![main](https://user-images.githubusercontent.com/48611968/81830205-69549400-9559-11ea-9df6-e9d0d3602f11.png)
 
 ## Getting Started
 > How to install?
