@@ -29,15 +29,23 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   PlanListBloc _planListBloc;
   TodoListBloc _todoListBloc;
 
-  Color _primaryColor = Color(0xff48c6ef);
+  Color _primaryColor;
+  bool _dark = false;
 
   _MyAppState() {
+    this._primaryColor = this._dark ? Color(0xffc5cae9) : Color(0xff48c6ef);
     //* Getting the app color
     SharedPreferences.getInstance().then((SharedPreferences prefs) {
-      if(prefs.getString('color') != null) {
+      if (prefs.getString('color') != null) {
         int color = int.parse('0xff' + prefs.getString('color'));
         this.setState(() {
           this._primaryColor = Color(color);
+        });
+      }
+
+      if (prefs.getBool('dark') != null) {
+        this.setState(() {
+          this._dark = prefs.getBool('dark');
         });
       }
     });
@@ -57,6 +65,15 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     var initializationSettings = new InitializationSettings(android, ios);
     _flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: _onSelectNotification);
+  }
+
+  void _changeMode(bool state) {
+    this.setState(() {
+      this._dark = state;
+    });
+    SharedPreferences.getInstance().then((SharedPreferences prefs) {
+      prefs.setBool('dark', this._dark);
+    });
   }
 
   Future _onSelectNotification(String payload) async {
@@ -96,6 +113,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
         Plan(this._centralDate),
         Statistics(),
         Setting(
+            changeMode: this._changeMode,
+            dark: this._dark,
             changePrimaryColor: this._changePrimaryColor,
             currrentPrimaryColor: this._primaryColor)
       ],
@@ -106,7 +125,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Schedular',
-      theme: theme(primaryColor: this._primaryColor),
+      theme: theme(primaryColor: this._primaryColor, dark: this._dark),
       home: DefaultTabController(
         length: 4,
         child: Scaffold(
@@ -154,7 +173,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     _tabController.dispose();
-    super.dispose();
     DBProvider.db.dispose();
+    super.dispose();
   }
 }

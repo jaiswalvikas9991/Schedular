@@ -6,9 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 //* This is non inheritable non instantiable class (aka. Singleton)
 abstract class NaiveBayes {
-  static int alpha = 1;
   static int numberOfBuckets;
-  static List<Map<String, dynamic>> list = List<Map<String, dynamic>>();
   NaiveBayes._();
 
   // static Future<double> probabilityWithRating(
@@ -126,14 +124,13 @@ abstract class NaiveBayes {
   }
 
   static Future<Map<String, dynamic>> predict(DateTime time) async {
-    list.clear();
+    List<Map<String, dynamic>> list = List<Map<String, dynamic>>();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //* This gets the list of the bucket
     final List<String> buckets = prefs.getStringList(bucketKey);
     //* This is if no bucket is added
     if (buckets == null || buckets.length == 0) return (null);
-    if (await prefs.get(dateKey) == null) return (null);
-    numberOfBuckets = buckets.length;
+    NaiveBayes.numberOfBuckets = buckets.length;
     //# We will check every bucket with every rating and then we will take the frequency weighted average to determine the final value of the probaility
     //# And we will declare that bucket as the anser which will have the higest weighted probability
     for (int i = 0; i < buckets.length; i++) {

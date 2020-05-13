@@ -1,23 +1,23 @@
-import 'dart:io';
-import 'package:intl/intl.dart';
-import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:schedular/utils/NaiveBayes.dart';
 import 'package:schedular/widgets/AddBucket.dart';
 import 'package:schedular/widgets/BucketCard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:schedular/utils/Animate.dart';
-import 'package:schedular/utils/DBProvider.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:schedular/utils/Constants.dart';
 
 class Setting extends StatefulWidget {
   final Function changePrimaryColor;
   final Color currrentPrimaryColor;
+  final Function changeMode;
+  bool dark = false;
   Setting(
-      {Key key, this.changePrimaryColor, @required this.currrentPrimaryColor})
+      {Key key,
+      this.changePrimaryColor,
+      @required this.currrentPrimaryColor,
+      this.changeMode,
+      this.dark})
       : super(key: key);
   @override
   _SettingState createState() => _SettingState();
@@ -100,6 +100,20 @@ class _SettingState extends State<Setting> with SingleTickerProviderStateMixin {
         padding: const EdgeInsets.all(15.0),
         child: Column(
           children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  "Dark Mode",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline5
+                      .copyWith(color: Theme.of(context).primaryColor),
+                  key: UniqueKey(),
+                ),
+                Switch(value: widget.dark, onChanged: widget.changeMode, activeColor: Theme.of(context).primaryColor)
+              ],
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-ThemeData theme({Color primaryColor = const Color(0xff48c6ef)}) {
-  final ThemeData base = ThemeData.light();
+ThemeData theme({Color primaryColor = const Color(0xff48c6ef), bool dark = false}) {
+  final ThemeData base = dark ? ThemeData.dark() :ThemeData.light();
 
   TextTheme _textTheme(TextTheme base) {
     return base.copyWith(
